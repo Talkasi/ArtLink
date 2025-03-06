@@ -1,92 +1,73 @@
-# ppo
+
+## Проектирование программного обеспечения, 2025
+### Лабораторная работа № 1
+
+## Название проекта
+
+Сайт для рабочего портфолио художников «ArtLink».
+
+## Краткое описание идеи проекта
+
+«ArtLink» — это платформа, где художники и компании, которые их ищут, могут найти друг друга на основе работ художественного портфолио. Художники могут создвавть профили, портфолио по разным жанрам и загружать туда свои работы. Работодатели могут искать интересующие их портфолио по опыту художника, технике и сфере деятельности. Художник может предоставить свои контакты работодателю, если посчитает это нужным.
+
+# Краткое описание предметной области
+
+Предметная область проекта связана с созданием и управлением цифровыми портфолио художников и поиском работы на их основе. Это включает в себя загрузку и хранение изображений, управление профилями пользователей, поиск и фильтрацию работ и портфолио по различным критериям.
+
+# Краткий анализ аналогичных решений
+
+| Имя проекта     | Краткое описание                                                                 | Отличия от «ArtLink»                                      |
+|------------------|----------------------------------------------------------------------------------|-----------------------------------------------------------|
+| **Behance**      | Платформа для творческих профессионалов, позволяющая создавать портфолио и делиться работами. | Больше ориентирован на показ работ, чем на поиск работы.  |
+| **Dribbble**     | Сообщество дизайнеров, где они могут делиться работами и находить рабочие проекты.            | Ориентирован на дизайнеров, а не на художников.           |
+| **ArtStation**   | Платформа для художников в области концепт-арта и 3D-моделирования.                           | Специализация на определенных жанрах искусства.           |
+| **LinkedIn**     | Профессиональная сеть для поиска работы и создания сетей контактов.                           | Не специализирована на художниках и творческих профессиях.|
+
+# Краткое обоснование целесообразности и актуальности проекта
+
+«ArtLink» упрощает поиск талантливых художников для работодателей и предоставляет художникам платформу для демонстрации своих работ. Проект актуален, так как будет позволять работодателям искать художников на основе реальных работ, а не на основе текстового резюме, а также будет фокусироваться именно на художниках.
+
+# Краткое описание акторов (ролей);
+
+| Роль          | Описание                                                                                     |
+|---------------|----------------------------------------------------------------------------------------------|
+| **Художник**      | Пользователь, создающий профиль и загружающий портфолио, демонстрируя свои работы. Может получать предложения о сотрудничестве и предоставлять работодателю свои данные. |
+| **Работодатель**   | Представитель компании или индивидуальный заказчик, ищущий художников для проектов. Может просматривать портфолио и отправлять предложения о сотрудничестве. |
+| **Администратор**  | Пользователь, ответственный за блокировку пользователей, нарушающих правила сайта. Следит за соблюдением правил и обеспечивает безопасность сайта. |
+| **Посетитель**    | Пользователь, который может просматривать платформу без регистрации. Может ознакомиться с работами художников, но не может взаимодействовать с другими пользователями. |
+
+# Use-Case - диаграмма (обратить внимание на UML нотацию, отразить разных акторов пересечение их возможностей в приложении);
+![use_case](./scheme/use_case.svg)
 
 
+# ER-диаграмма сущностей (не путать с диаграммой БД – диаграмма сущность-связь не приземлена на конкретную СУБД и показывает сущности системы, в том числе те, которые не будут персистентно храниться);
+![er](./scheme/er.svg)
 
-## Getting started
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+# Пользовательские сценарии (не менее 3 типовых сценариев, в текстовом виде, расписанных по шагам, для разных акторов);
+#### Сценарий 1: Художник создает профиль и загружает портфолио
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+1. **Регистрация**: Художник заходит на сайт «ArtLink» и нажимает на кнопку «Зарегистрироваться».
+2. **Заполнение данных**: Художник заполняет форму регистрации, указывая имя, электронную почту и пароль.
+3. **Подтверждение**: Художник получает письмо с кодом на указанную электронную почту и вводит его на сайте для подтверждения регистрации.
+4. **Создание профиля**: После входа в систему художник заполняет свой профиль, добавляя информацию о себе, своих навыках и опыте.
+5. **Загрузка работ**: Художник загружает изображения своих работ, организует их по жанрам и добавляет описания.
+6. **Сохранение профиля**: Художник сохраняет изменения и публикует свое портфолио.
+7. **Получение уведомлений**: Художник получает уведомление о том, что его профиль успешно создан и доступен для просмотра работодателями.
 
-## Add your files
+#### Сценарий 2: Работодатель ищет художника для проекта
 
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/ee/gitlab-basics/add-file.html#add-a-file-using-the-command-line) or push an existing Git repository with the following command:
+1. **Вход на платформу**: Работодатель заходит на сайт «ArtLink» и вводит свои учетные данные для входа.
+2. **Поиск художников**: Работодатель переходит в раздел поиска и использует фильтры для выбора художников по техникам и опыту.
+3. **Просмотр портфолио**: Работодатель просматривает найденные портфолио, обращая внимание на работы и описания.
+4. **Отправка предложения**: Работодатель нажимает на кнопку «Предложить сотрудничество» у выбранного художника, заполняет текстовое поле с описанием проекта и отправляет предложение.
+5. **Ожидание ответа**: Работодатель ждет уведомления о том, что художник принял или отклонил предложение.
 
-```
-cd existing_repo
-git remote add origin https://git.iu7.bmstu.ru/kkd22u221/ppo.git
-git branch -M main
-git push -uf origin main
-```
+#### Сценарий 3: Администратор блокирует нарушителей на платформе
 
-## Integrate with your tools
+1. **Вход в админ-панель**: Администратор заходит на сайт «ArtLink» и вводит свои учетные данные для доступа к админ-панели.
+2. **Просмотр пользователей**: Администратор переходит в раздел управления пользователями и просматривает список зарегистрированных художников и работодателей.
+3. **Блокировка нарушителей**:  Администратор блокирует аккаунт пользователя, нарушающего правила использования.
 
-- [ ] [Set up project integrations](https://git.iu7.bmstu.ru/kkd22u221/ppo/-/settings/integrations)
-
-## Collaborate with your team
-
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Automatically merge when pipeline succeeds](https://docs.gitlab.com/ee/user/project/merge_requests/merge_when_pipeline_succeeds.html)
-
-## Test and Deploy
-
-Use the built-in continuous integration in GitLab.
-
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/index.html)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing(SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
-
-***
-
-# Editing this README
-
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thank you to [makeareadme.com](https://www.makeareadme.com/) for this template.
-
-## Suggestions for a good README
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
-
-## Name
-Choose a self-explaining name for your project.
-
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
-
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
-
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
-
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
-
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
-
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
-
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
-
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
-
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
-
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
-
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
-
-## License
-For open source projects, say how it is licensed.
-
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+# Формализация ключевых бизнес-процессов (либо один основной комплексный бизнес процесс, либо 3-4 декомпозированных, небольших, используя BPMN-нотацию).
+![bpmn](./scheme/bpmn.svg)
