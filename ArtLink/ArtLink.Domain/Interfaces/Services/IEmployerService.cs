@@ -1,0 +1,60 @@
+using ArtLink.Domain.Models;
+
+namespace ArtLink.Domain.Interfaces.Services;
+
+public interface IEmployerService
+{
+    /// <summary>
+    /// Asynchronously retrieves an employer by its unique identifier.
+    /// </summary>
+    /// <param name="id">The unique identifier of the employer to retrieve.</param>
+    /// <returns>
+    /// A task that represents the asynchronous operation. 
+    /// The task result contains the employer if found; otherwise, it is null.
+    /// </returns>
+    Task<Employer?> GetEmployerByIdAsync(Guid id);
+
+    /// <summary>
+    /// Asynchronously retrieves all employers in the system.
+    /// </summary>
+    /// <returns>
+    /// A task that represents the asynchronous operation. 
+    /// The task result contains a collection of all employers.
+    /// </returns>
+    Task<IEnumerable<Employer>> GetAllEmployersAsync();
+
+    /// <summary>
+    /// Asynchronously adds a new employer to the system.
+    /// </summary>
+    /// <param name="companyName">The name of the company associated with the employer.</param>
+    /// <param name="email">The email address of the employer.</param>
+    /// <param name="cpFirstName">The first name of the contact person.</param>
+    /// <param name="cpLastName">The last name of the contact person.</param>
+    /// <returns>A task representing the asynchronous operation.</returns>
+    Task AddEmployerAsync(string companyName, 
+        string email, 
+        string cpFirstName, 
+        string cpLastName);
+
+    /// <summary>
+    /// Asynchronously updates an existing employer's information.
+    /// </summary>
+    /// <param name="id">The unique identifier of the employer to update.</param>
+    /// <param name="companyName">The new name of the company associated with the employer.</param>
+    /// <param name="email">The new email address of the employer.</param>
+    /// <param name="cpFirstName">The new first name of the contact person.</param>
+    /// <param name="cpLastName">The new last name of the contact person.</param>
+    /// <returns>A task representing the asynchronous operation.</returns>
+    Task UpdateEmployerAsync(Guid id, 
+        string companyName, 
+        string email, 
+        string cpFirstName, 
+        string cpLastName);
+
+    /// <summary>
+    /// Asynchronously deletes an employer by its unique identifier.
+    /// </summary>
+    /// <param name="id">The unique identifier of the employer to delete.</param>
+    /// <returns>A task representing the asynchronous operation.</returns>
+    Task DeleteEmployerAsync(Guid id);
+}
