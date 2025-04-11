@@ -1,4 +1,4 @@
-namespace ScrumPoker.Domain.Models;
+namespace ArtLink.Domain.Models;
 
 public class Technique(
     Guid id,

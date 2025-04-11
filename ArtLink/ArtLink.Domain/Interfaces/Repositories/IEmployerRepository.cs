@@ -34,7 +34,8 @@ public interface IEmployerRepository
     Task AddAsync(string companyName, 
         string email, 
         string cpFirstName, 
-        string cpLastName);
+        string cpLastName,
+        string passwordHash);
 
     /// <summary>
     /// Asynchronously updates an existing employer's information.

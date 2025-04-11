@@ -33,6 +33,7 @@ public interface IEmployerService
     /// <returns>A task representing the asynchronous operation.</returns>
     Task AddEmployerAsync(string companyName, 
         string email, 
+        string passwordHash,
         string cpFirstName, 
         string cpLastName);
 

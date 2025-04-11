@@ -18,7 +18,7 @@ public class PortfolioService(IPortfolioRepository portfolioRepository) : IPortf
 
     public async Task AddPortfolioAsync(Guid artistId,
         string title,
-        string description,
+        string? description,
         Guid techniqueId)
     {
         await portfolioRepository.AddAsync(artistId, title, description, techniqueId);
@@ -27,7 +27,7 @@ public class PortfolioService(IPortfolioRepository portfolioRepository) : IPortf
     public async Task UpdatePortfolioAsync(Guid id,
         Guid artistId,
         string title,
-        string description,
+        string? description,
         Guid techniqueId)
     {
         await portfolioRepository.UpdateAsync(id, artistId, title, description, techniqueId);

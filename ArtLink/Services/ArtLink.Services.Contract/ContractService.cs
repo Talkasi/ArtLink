@@ -1,6 +1,7 @@
 using ContractModel = ArtLink.Domain.Models.Contract;
 using ArtLink.Domain.Interfaces.Services;
 using ArtLink.Domain.Interfaces.Repositories;
+using ArtLink.Domain.Models.Enums;
 
 namespace ArtLink.Services.Contract;
 
@@ -24,9 +25,9 @@ public class ContractService(IContractRepository contractRepository) : IContract
     public async Task AddContractAsync(Guid artistId,
         Guid employerId,
         string projectDescription,
-        DateTime startDate,
-        DateTime endDate,
-        string status)
+        DateTime? startDate,
+        DateTime? endDate,
+        ContractState status)
     {
         await contractRepository.AddAsync(artistId, employerId, projectDescription, startDate, endDate, status);
     }
@@ -35,9 +36,9 @@ public class ContractService(IContractRepository contractRepository) : IContract
         Guid artistId,
         Guid employerId,
         string projectDescription,
-        DateTime startDate,
-        DateTime endDate,
-        string status)
+        DateTime? startDate,
+        DateTime? endDate,
+        ContractState status)
     {
         await contractRepository.UpdateAsync(id, artistId, employerId, projectDescription, startDate, endDate, status);
     }

@@ -36,9 +36,10 @@ public interface IArtistService
     Task AddArtistAsync(string firstName, 
         string lastName, 
         string email, 
-        string bio, 
-        string profilePicturePath, 
-        int experience);
+        string passwordHash,
+        string? bio,
+        string? profilePicturePath, 
+        int? experience);
 
     /// <summary>
     /// Asynchronously updates an existing artist's information.
@@ -55,9 +56,9 @@ public interface IArtistService
         string firstName, 
         string lastName, 
         string email, 
-        string bio, 
-        string profilePicturePath, 
-        int experience);
+        string? bio, 
+        string? profilePicturePath, 
+        int? experience);
 
     /// <summary>
     /// Asynchronously deletes an artist by its unique identifier.
