@@ -35,10 +35,11 @@ public interface IArtistRepository
     /// <returns>A task representing the asynchronous operation.</returns>
     Task AddAsync(string firstName, 
         string lastName, 
-        string email, 
-        string bio, 
-        string profilePicturePath, 
-        int experience);
+        string email,
+        string passwordHash,
+        string? bio, 
+        string? profilePicturePath, 
+        int? experience);
 
     /// <summary>
     /// Asynchronously updates an existing artist in the repository.
@@ -55,9 +56,9 @@ public interface IArtistRepository
         string firstName, 
         string lastName, 
         string email, 
-        string bio, 
-        string profilePicturePath, 
-        int experience);
+        string? bio, 
+        string? profilePicturePath, 
+        int? experience);
 
     /// <summary>
     /// Asynchronously deletes an artist by its unique identifier.

@@ -5,7 +5,7 @@ public class Portfolio(
     Guid artistId,
     Guid techniqueId,
     string title,
-    string description)
+    string? description)
 {
     public Guid Id { get; set; } = id;
 
@@ -15,5 +15,5 @@ public class Portfolio(
 
     public string Title { get; set; } = title;
 
-    public string Description { get; set; } = description;
+    public string? Description { get; set; } = description;
 }

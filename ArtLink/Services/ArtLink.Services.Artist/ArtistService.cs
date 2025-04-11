@@ -19,20 +19,21 @@ public class ArtistService(IArtistRepository artistRepository) : IArtistService
     public async Task AddArtistAsync(string firstName,
         string lastName,
         string email,
-        string bio,
-        string profilePicturePath,
-        int experience)
+        string passwordHash,
+        string? bio,
+        string? profilePicturePath,
+        int? experience)
     {
-        await artistRepository.AddAsync(firstName, lastName, email, bio, profilePicturePath, experience);
+        await artistRepository.AddAsync(firstName, lastName, email, passwordHash, bio, profilePicturePath, experience);
     }
 
     public async Task UpdateArtistAsync(Guid id,
         string firstName,
         string lastName,
         string email,
-        string bio,
-        string profilePicturePath,
-        int experience)
+        string? bio,
+        string? profilePicturePath,
+        int? experience)
     {
         await artistRepository.UpdateAsync(id, firstName, lastName, email, bio, profilePicturePath, experience);
     }

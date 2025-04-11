@@ -1,4 +1,5 @@
 using ArtLink.Domain.Models;
+using ArtLink.Domain.Models.Enums;
 
 namespace ArtLink.Domain.Interfaces.Services;
 
@@ -47,9 +48,9 @@ public interface IContractService
     Task AddContractAsync(Guid artistId, 
         Guid employerId, 
         string projectDescription, 
-        DateTime startDate, 
-        DateTime endDate, 
-        string status);
+        DateTime? startDate, 
+        DateTime? endDate, 
+        ContractState status);
 
     /// <summary>
     /// Asynchronously updates an existing contract with the specified details.
@@ -66,9 +67,9 @@ public interface IContractService
         Guid artistId, 
         Guid employerId, 
         string projectDescription, 
-        DateTime startDate, 
-        DateTime endDate, 
-        string status);
+        DateTime? startDate, 
+        DateTime? endDate, 
+        ContractState status);
 
     /// <summary>
     /// Asynchronously deletes a contract by its unique identifier.

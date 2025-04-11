@@ -16,7 +16,7 @@ public class Employer(
 
     public string PasswordHash { get; set; } = passwordHash;
 
-    public string CPFirstName { get; set; } = cpFirstName;
+    public string CpFirstName { get; set; } = cpFirstName;
 
-    public string CPLastName { get; set; } = cpLastName;
+    public string CpLastName { get; set; } = cpLastName;
 }

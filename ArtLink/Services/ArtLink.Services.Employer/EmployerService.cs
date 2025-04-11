@@ -18,10 +18,11 @@ public class EmployerService(IEmployerRepository employerRepository) : IEmployer
 
     public async Task AddEmployerAsync(string companyName,
         string email,
+        string passwordHash,
         string cpFirstName,
         string cpLastName)
     {
-        await employerRepository.AddAsync(companyName, email, cpFirstName, cpLastName);
+        await employerRepository.AddAsync(companyName, email, cpFirstName, cpLastName, passwordHash);
     }
 
     public async Task UpdateEmployerAsync(Guid id,

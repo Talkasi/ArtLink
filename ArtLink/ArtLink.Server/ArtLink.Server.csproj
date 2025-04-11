@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <Content Include="..\.dockerignore">
+        <Link>.dockerignore</Link>
+      </Content>
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\ArtLink.DataAccess\ArtLink.DataAccess.csproj" />
+      <ProjectReference Include="..\ArtLink.Domain\ArtLink.Domain.csproj" />
+      <ProjectReference Include="..\Services\ArtLink.Services.Artist\ArtLink.Services.Artist.csproj" />
+      <ProjectReference Include="..\Services\ArtLink.Services.Artwork\ArtLink.Services.Artwork.csproj" />
+      <ProjectReference Include="..\Services\ArtLink.Services.Contract\ArtLink.Services.Contract.csproj" />
+      <ProjectReference Include="..\Services\ArtLink.Services.Employer\ArtLink.Services.Employer.csproj" />
+      <ProjectReference Include="..\Services\ArtLink.Services.Portfolio\ArtLink.Services.Portfolio.csproj" />
+      <ProjectReference Include="..\Services\ArtLink.Services.Search\ArtLink.Services.Search.csproj" />
+    </ItemGroup>
+
+</Project>

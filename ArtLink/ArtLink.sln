@@ -18,6 +18,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArtLink.Services.Portfolio"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArtLink.Services.Search", "Services\ArtLink.Services.Search\ArtLink.Services.Search.csproj", "{C06356D3-B380-4C96-A932-9E0CDB9B9776}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArtLink.DataAccess", "ArtLink.DataAccess\ArtLink.DataAccess.csproj", "{3DF04616-0A30-4EE9-88CD-6C4952350477}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArtLink.Server", "ArtLink.Server\ArtLink.Server.csproj", "{16336D9F-E433-44E5-8CE8-4D849FAE29C1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -56,5 +60,13 @@ Global
 		{C06356D3-B380-4C96-A932-9E0CDB9B9776}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C06356D3-B380-4C96-A932-9E0CDB9B9776}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C06356D3-B380-4C96-A932-9E0CDB9B9776}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3DF04616-0A30-4EE9-88CD-6C4952350477}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3DF04616-0A30-4EE9-88CD-6C4952350477}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3DF04616-0A30-4EE9-88CD-6C4952350477}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3DF04616-0A30-4EE9-88CD-6C4952350477}.Release|Any CPU.Build.0 = Release|Any CPU
+		{16336D9F-E433-44E5-8CE8-4D849FAE29C1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{16336D9F-E433-44E5-8CE8-4D849FAE29C1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{16336D9F-E433-44E5-8CE8-4D849FAE29C1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{16336D9F-E433-44E5-8CE8-4D849FAE29C1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

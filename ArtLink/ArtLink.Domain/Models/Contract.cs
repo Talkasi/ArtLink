@@ -1,3 +1,5 @@
+using ArtLink.Domain.Models.Enums;
+
 namespace ArtLink.Domain.Models;
 
 public class Contract(
@@ -5,9 +7,9 @@ public class Contract(
     Guid artistId,
     Guid employerId,
     string projectDescription,
-    DateTime startDate,
-    DateTime endDate,
-    string status)
+    DateTime? startDate,
+    DateTime? endDate,
+    ContractState status)
 {
     public Guid Id { get; set; } = id;
 
@@ -17,9 +19,9 @@ public class Contract(
 
     public string ProjectDescription { get; set; } = projectDescription;
 
-    public DateTime StartDate { get; set; } = startDate;
+    public DateTime? StartDate { get; set; } = startDate;
 
-    public DateTime EndDate { get; set; } = endDate;
+    public DateTime? EndDate { get; set; } = endDate;
 
-    public string Status { get; set; } = status;
+    public ContractState Status { get; set; } = status;
 }

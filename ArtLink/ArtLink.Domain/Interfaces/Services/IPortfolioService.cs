@@ -34,7 +34,7 @@ public interface IPortfolioService
     /// <returns>A task representing the asynchronous operation.</returns>
     Task AddPortfolioAsync(Guid artistId, 
         string title, 
-        string description, 
+        string? description, 
         Guid techniqueId);
 
     /// <summary>
@@ -49,7 +49,7 @@ public interface IPortfolioService
     Task UpdatePortfolioAsync(Guid id, 
         Guid artistId, 
         string title, 
-        string description, 
+        string? description, 
         Guid techniqueId);
 
     /// <summary>
