@@ -5,6 +5,8 @@
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        <NoWarn>$(NoWarn);1591</NoWarn>
     </PropertyGroup>
 
     <ItemGroup>
@@ -16,12 +18,22 @@
     <ItemGroup>
       <ProjectReference Include="..\ArtLink.DataAccess\ArtLink.DataAccess.csproj" />
       <ProjectReference Include="..\ArtLink.Domain\ArtLink.Domain.csproj" />
+      <ProjectReference Include="..\ArtLink.Dto\ArtLink.Dto.csproj" />
       <ProjectReference Include="..\Services\ArtLink.Services.Artist\ArtLink.Services.Artist.csproj" />
       <ProjectReference Include="..\Services\ArtLink.Services.Artwork\ArtLink.Services.Artwork.csproj" />
       <ProjectReference Include="..\Services\ArtLink.Services.Contract\ArtLink.Services.Contract.csproj" />
       <ProjectReference Include="..\Services\ArtLink.Services.Employer\ArtLink.Services.Employer.csproj" />
       <ProjectReference Include="..\Services\ArtLink.Services.Portfolio\ArtLink.Services.Portfolio.csproj" />
       <ProjectReference Include="..\Services\ArtLink.Services.Search\ArtLink.Services.Search.csproj" />
+      <ProjectReference Include="..\Services\ArtLink.Services.Technique\ArtLink.Services.Technique.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.4">
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        <PrivateAssets>all</PrivateAssets>
+      </PackageReference>
+      <PackageReference Include="Swashbuckle.AspNetCore" Version="8.1.1" />
     </ItemGroup>
 
 </Project>

@@ -72,15 +72,13 @@ public class ArtworkServiceTests
         await _service.AddArtworkAsync(
             _testPortfolioId,
             TestTitle,
-            TestDescription,
-            TestImagePath);
+            TestImagePath, TestDescription);
 
         // Assert
         _mockRepo.Verify(r => r.AddAsync(
             _testPortfolioId,
             TestTitle,
-            TestDescription,
-            TestImagePath), Times.Once);
+            TestImagePath, TestDescription), Times.Once);
     }
 
     [Fact]
@@ -97,16 +95,14 @@ public class ArtworkServiceTests
             artworkId,
             _testPortfolioId,
             newTitle,
-            newDescription,
-            newImagePath);
+            newImagePath, newDescription);
 
         // Assert
         _mockRepo.Verify(r => r.UpdateAsync(
             artworkId,
             _testPortfolioId,
             newTitle,
-            newDescription,
-            newImagePath), Times.Once);
+            newImagePath, newDescription), Times.Once);
     }
 
     [Fact]

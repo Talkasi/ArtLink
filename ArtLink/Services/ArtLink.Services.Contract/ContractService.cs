@@ -25,22 +25,22 @@ public class ContractService(IContractRepository contractRepository) : IContract
     public async Task AddContractAsync(Guid artistId,
         Guid employerId,
         string projectDescription,
+        ContractState status,
         DateTime? startDate,
-        DateTime? endDate,
-        ContractState status)
+        DateTime? endDate = null)
     {
-        await contractRepository.AddAsync(artistId, employerId, projectDescription, startDate, endDate, status);
+        await contractRepository.AddAsync(artistId, employerId, projectDescription, status: status, startDate: startDate, endDate: endDate);
     }
 
     public async Task UpdateContractAsync(Guid id,
         Guid artistId,
         Guid employerId,
         string projectDescription,
+        ContractState status,
         DateTime? startDate,
-        DateTime? endDate,
-        ContractState status)
+        DateTime? endDate = null)
     {
-        await contractRepository.UpdateAsync(id, artistId, employerId, projectDescription, startDate, endDate, status);
+        await contractRepository.UpdateAsync(id, artistId, employerId, projectDescription, status: status, startDate: startDate, endDate: endDate);
     }
 
     public async Task DeleteContractAsync(Guid id)

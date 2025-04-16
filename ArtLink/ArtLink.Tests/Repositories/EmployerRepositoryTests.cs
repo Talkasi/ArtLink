@@ -2,12 +2,13 @@
 using ArtLink.DataAccess.Models;
 using ArtLink.DataAccess.Repositories;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace ArtLink.Tests.Repositories;
 
 public class EmployerRepositoryTests
 {
-    private ArtLinkDbContext CreateContext()
+    private static ArtLinkDbContext CreateContext()
     {
         var options = new DbContextOptionsBuilder<ArtLinkDbContext>()
             .UseInMemoryDatabase(Guid.NewGuid().ToString())
@@ -16,13 +17,18 @@ public class EmployerRepositoryTests
         return new ArtLinkDbContext(options);
     }
 
+    private static EmployerRepository CreateRepository(ArtLinkDbContext context)
+    {
+        return new EmployerRepository(context, NullLogger<EmployerRepository>.Instance);
+    }
+
     [Fact]
     public async Task AddAsync_ShouldAddEmployer()
     {
-        using var context = CreateContext();
-        var repo = new EmployerRepository(context);
+        await using var context = CreateContext();
+        var repo = CreateRepository(context);
 
-        await repo.AddAsync("TechCorp", "hr@techcorp.com", "Alice", "Johnson", "hash123");
+        await repo.AddAsync("TechCorp", "hr@techcorp.com", "hash123", "Alice", "Johnson");
 
         var employer = await context.Employers.FirstOrDefaultAsync();
         Assert.NotNull(employer);
@@ -33,8 +39,8 @@ public class EmployerRepositoryTests
     [Fact]
     public async Task GetByIdAsync_ShouldReturnEmployer()
     {
-        using var context = CreateContext();
-        var repo = new EmployerRepository(context);
+        await using var context = CreateContext();
+        var repo = CreateRepository(context);
 
         var id = Guid.NewGuid();
         var employer = new EmployerDb(id, "Media Inc", "media@corp.com", "passhash", "Bob", "Smith");
@@ -44,14 +50,14 @@ public class EmployerRepositoryTests
         var result = await repo.GetByIdAsync(id);
 
         Assert.NotNull(result);
-        Assert.Equal("Media Inc", result!.CompanyName);
+        Assert.Equal("Media Inc", result.CompanyName);
     }
 
     [Fact]
     public async Task GetAllEmployersAsync_ShouldReturnAllEmployers()
     {
-        using var context = CreateContext();
-        var repo = new EmployerRepository(context);
+        await using var context = CreateContext();
+        var repo = CreateRepository(context);
 
         context.Employers.AddRange(
             new EmployerDb(Guid.NewGuid(), "A", "a@a.com", "hash1", "John", "Doe"),
@@ -67,8 +73,8 @@ public class EmployerRepositoryTests
     [Fact]
     public async Task UpdateAsync_ShouldModifyEmployer()
     {
-        using var context = CreateContext();
-        var repo = new EmployerRepository(context);
+        await using var context = CreateContext();
+        var repo = CreateRepository(context);
 
         var id = Guid.NewGuid();
         var employer = new EmployerDb(id, "OldName", "old@mail.com", "hash", "OldFirst", "OldLast");
@@ -79,15 +85,15 @@ public class EmployerRepositoryTests
 
         var updated = await context.Employers.FindAsync(id);
         Assert.NotNull(updated);
-        Assert.Equal("NewName", updated!.CompanyName);
+        Assert.Equal("NewName", updated.CompanyName);
         Assert.Equal("NewFirst", updated.CpFirstName);
     }
 
     [Fact]
     public async Task DeleteAsync_ShouldRemoveEmployer()
     {
-        using var context = CreateContext();
-        var repo = new EmployerRepository(context);
+        await using var context = CreateContext();
+        var repo = CreateRepository(context);
 
         var id = Guid.NewGuid();
         context.Employers.Add(new EmployerDb(id, "ToDelete", "del@mail.com", "hash", "Del", "User"));
@@ -102,8 +108,8 @@ public class EmployerRepositoryTests
     [Fact]
     public async Task SearchByPromptAsync_ShouldReturnMatches()
     {
-        using var context = CreateContext();
-        var repo = new EmployerRepository(context);
+        await using var context = CreateContext();
+        var repo = CreateRepository(context);
 
         context.Employers.AddRange(
             new EmployerDb(Guid.NewGuid(), "AlphaTech", "a@a.com", "hash", "Lena", "Karlson"),
@@ -119,4 +125,3 @@ public class EmployerRepositoryTests
         Assert.Contains(results, e => e.CpLastName == "Beta");
     }
 }
-

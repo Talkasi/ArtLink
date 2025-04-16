@@ -2,12 +2,13 @@
 using ArtLink.DataAccess.Models;
 using ArtLink.DataAccess.Repositories;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace ArtLink.Tests.Repositories;
 
 public class PortfolioRepositoryTests
 {
-    private ArtLinkDbContext GetInMemoryDbContext()
+    private static ArtLinkDbContext GetInMemoryDbContext()
     {
         var options = new DbContextOptionsBuilder<ArtLinkDbContext>()
             .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
@@ -15,18 +16,23 @@ public class PortfolioRepositoryTests
         return new ArtLinkDbContext(options);
     }
 
+    private static PortfolioRepository CreateRepository(ArtLinkDbContext context)
+    {
+        return new PortfolioRepository(context, NullLogger<PortfolioRepository>.Instance);
+    }
+
     [Fact]
     public async Task AddAsync_ShouldAddPortfolio()
     {
-        using var context = GetInMemoryDbContext();
-        var repository = new PortfolioRepository(context);
+        await using var context = GetInMemoryDbContext();
+        var repository = CreateRepository(context);
 
         var artistId = Guid.NewGuid();
         var techniqueId = Guid.NewGuid();
-        var title = "Test Portfolio";
-        var description = "Test Description";
+        const string title = "Test Portfolio";
+        const string description = "Test Description";
 
-        await repository.AddAsync(artistId, title, description, techniqueId);
+        await repository.AddAsync(artistId, title, techniqueId, description);
 
         var portfolio = await context.Portfolios.FirstOrDefaultAsync();
         Assert.NotNull(portfolio);
@@ -37,23 +43,23 @@ public class PortfolioRepositoryTests
     [Fact]
     public async Task GetByIdAsync_ShouldReturnPortfolio()
     {
-        using var context = GetInMemoryDbContext();
+        await using var context = GetInMemoryDbContext();
         var portfolioId = Guid.NewGuid();
         var portfolioDb = new PortfolioDb(portfolioId, Guid.NewGuid(), Guid.NewGuid(), "Title", "Desc");
         context.Portfolios.Add(portfolioDb);
         await context.SaveChangesAsync();
 
-        var repository = new PortfolioRepository(context);
+        var repository = CreateRepository(context);
         var result = await repository.GetByIdAsync(portfolioId);
 
         Assert.NotNull(result);
-        Assert.Equal(portfolioId, result!.Id);
+        Assert.Equal(portfolioId, result.Id);
     }
 
     [Fact]
     public async Task GetAllByArtistIdAsync_ShouldReturnCorrectPortfolios()
     {
-        using var context = GetInMemoryDbContext();
+        await using var context = GetInMemoryDbContext();
         var artistId = Guid.NewGuid();
         context.Portfolios.AddRange(
             new PortfolioDb(Guid.NewGuid(), artistId, Guid.NewGuid(), "Title 1", "desc 1"),
@@ -62,7 +68,7 @@ public class PortfolioRepositoryTests
         );
         await context.SaveChangesAsync();
 
-        var repository = new PortfolioRepository(context);
+        var repository = CreateRepository(context);
         var result = await repository.GetAllByArtistIdAsync(artistId);
 
         Assert.Equal(2, result.Count());
@@ -71,23 +77,23 @@ public class PortfolioRepositoryTests
     [Fact]
     public async Task UpdateAsync_ShouldUpdatePortfolio()
     {
-        using var context = GetInMemoryDbContext();
+        await using var context = GetInMemoryDbContext();
         var portfolioId = Guid.NewGuid();
         var portfolio = new PortfolioDb(portfolioId, Guid.NewGuid(), Guid.NewGuid(), "Old Title", "Old Desc");
         context.Portfolios.Add(portfolio);
         await context.SaveChangesAsync();
 
-        var repository = new PortfolioRepository(context);
-        var newTitle = "New Title";
-        var newDesc = "New Desc";
+        var repository = CreateRepository(context);
+        const string newTitle = "New Title";
+        const string newDesc = "New Desc";
         var newTechniqueId = Guid.NewGuid();
         var newArtistId = Guid.NewGuid();
 
-        await repository.UpdateAsync(portfolioId, newArtistId, newTitle, newDesc, newTechniqueId);
+        await repository.UpdateAsync(portfolioId, newArtistId, newTitle, newTechniqueId, newDesc);
 
         var updated = await context.Portfolios.FindAsync(portfolioId);
         Assert.NotNull(updated);
-        Assert.Equal(newTitle, updated!.Title);
+        Assert.Equal(newTitle, updated.Title);
         Assert.Equal(newDesc, updated.Description);
         Assert.Equal(newTechniqueId, updated.TechniqueId);
         Assert.Equal(newArtistId, updated.ArtistId);
@@ -96,12 +102,12 @@ public class PortfolioRepositoryTests
     [Fact]
     public async Task DeleteAsync_ShouldRemovePortfolio()
     {
-        using var context = GetInMemoryDbContext();
+        await using var context = GetInMemoryDbContext();
         var portfolioId = Guid.NewGuid();
         context.Portfolios.Add(new PortfolioDb(portfolioId, Guid.NewGuid(), Guid.NewGuid(), "Title", "asd"));
         await context.SaveChangesAsync();
 
-        var repository = new PortfolioRepository(context);
+        var repository = CreateRepository(context);
         await repository.DeleteAsync(portfolioId);
 
         var deleted = await context.Portfolios.FindAsync(portfolioId);

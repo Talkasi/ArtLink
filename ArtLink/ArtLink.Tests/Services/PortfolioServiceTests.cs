@@ -64,11 +64,11 @@ public class PortfolioServiceTests
         const string description = "Desc";
 
         // Act
-        await _portfolioService.AddPortfolioAsync(artistId, title, description, techniqueId);
+        await _portfolioService.AddPortfolioAsync(artistId, title, techniqueId, description);
 
         // Assert
         _portfolioRepoMock.Verify(r =>
-            r.AddAsync(artistId, title, description, techniqueId), Times.Once);
+            r.AddAsync(artistId, title, techniqueId, description), Times.Once);
     }
 
     [Fact]
@@ -82,11 +82,11 @@ public class PortfolioServiceTests
         const string description = "Updated desc";
 
         // Act
-        await _portfolioService.UpdatePortfolioAsync(portfolioId, artistId, title, description, techniqueId);
+        await _portfolioService.UpdatePortfolioAsync(portfolioId, artistId, title, techniqueId, description);
 
         // Assert
         _portfolioRepoMock.Verify(r =>
-            r.UpdateAsync(portfolioId, artistId, title, description, techniqueId), Times.Once);
+            r.UpdateAsync(portfolioId, artistId, title, techniqueId, description), Times.Once);
     }
 
 

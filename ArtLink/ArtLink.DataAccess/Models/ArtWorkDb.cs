@@ -2,37 +2,29 @@
 
 namespace ArtLink.DataAccess.Models;
 
-public class ArtworkDb
+public class ArtworkDb(
+    Guid id,
+    Guid portfolioId,
+    string title,
+    string imagePath,
+    string? description = null)
 {
-    public ArtworkDb(Guid id, 
-        Guid portfolioId, 
-        string title, 
-        string imagePath,
-        string? description = null)
-    {
-        Id = id;
-        PortfolioId = portfolioId;
-        Title = title;
-        Description = description;
-        ImagePath = imagePath;
-    }
-
     [Key]
-    public Guid Id { get; set; }
+    public Guid Id { get; init; } = id;
 
     [Required]
-    public Guid PortfolioId { get; set; }
+    public Guid PortfolioId { get; set; } = portfolioId;
 
     [Required]
     [MaxLength(200)]
-    public string Title { get; set; }
+    public string Title { get; set; } = title;
 
     [MaxLength(2000)]
-    public string? Description { get; set; }
+    public string? Description { get; set; } = description;
 
     [Required]
     [MaxLength(500)]
-    public string ImagePath { get; set; }
+    public string ImagePath { get; set; } = imagePath;
 
-    public PortfolioDb? Portfolio { get; set; }
+    public PortfolioDb? Portfolio { get; init; }
 }

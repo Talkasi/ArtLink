@@ -16,7 +16,8 @@ public class EmployerService(IEmployerRepository employerRepository) : IEmployer
         return await employerRepository.GetAllEmployersAsync();
     }
 
-    public async Task AddEmployerAsync(string companyName,
+    public async Task AddEmployerAsync(
+        string companyName,
         string email,
         string passwordHash,
         string cpFirstName,
@@ -25,7 +26,8 @@ public class EmployerService(IEmployerRepository employerRepository) : IEmployer
         await employerRepository.AddAsync(companyName, email, cpFirstName, cpLastName, passwordHash);
     }
 
-    public async Task UpdateEmployerAsync(Guid id,
+    public async Task UpdateEmployerAsync(
+        Guid id,
         string companyName,
         string email,
         string cpFirstName,
@@ -37,5 +39,10 @@ public class EmployerService(IEmployerRepository employerRepository) : IEmployer
     public async Task DeleteEmployerAsync(Guid id)
     {
         await employerRepository.DeleteAsync(id);
+    }
+
+    public async Task<EmployerModel?> LoginEmployerAsync(string email, string passwordHash)
+    {
+        return await employerRepository.LoginAsync(email, passwordHash);
     }
 }

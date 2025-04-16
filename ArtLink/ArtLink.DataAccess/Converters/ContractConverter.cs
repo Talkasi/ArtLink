@@ -1,7 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using ArtLink.DataAccess.Models;
 using ArtLink.Domain.Models;
-using ArtLink.DataAccess.Models.Enums;
 
 namespace ArtLink.DataAccess.Converters;
 

@@ -9,8 +9,8 @@ public interface IArtistRepository
     /// </summary>
     /// <param name="id">The unique identifier of the artist to retrieve.</param>
     /// <returns>
-    /// A task that represents the asynchronous operation. 
-    /// The task result contains the artist if found; otherwise, it returns null.
+    /// A task that represents the asynchronous operation.
+    /// The task result contains the <see cref="Artist"/> if found; otherwise, <c>null</c>.
     /// </returns>
     Task<Artist?> GetByIdAsync(Guid id);
 
@@ -18,8 +18,8 @@ public interface IArtistRepository
     /// Asynchronously retrieves all artists in the repository.
     /// </summary>
     /// <returns>
-    /// A task that represents the asynchronous operation. 
-    /// The task result contains a collection of all artists.
+    /// A task that represents the asynchronous operation.
+    /// The task result contains a collection of <see cref="Artist"/> entities.
     /// </returns>
     Task<IEnumerable<Artist>> GetAllAsync();
 
@@ -29,17 +29,19 @@ public interface IArtistRepository
     /// <param name="firstName">The first name of the artist.</param>
     /// <param name="lastName">The last name of the artist.</param>
     /// <param name="email">The email address of the artist.</param>
-    /// <param name="bio">A brief biography of the artist.</param>
-    /// <param name="profilePicturePath">The file path or URL of the artist's profile picture.</param>
-    /// <param name="experience">The number of years of experience the artist has.</param>
-    /// <returns>A task representing the asynchronous operation.</returns>
-    Task AddAsync(string firstName, 
-        string lastName, 
+    /// <param name="passwordHash">The hashed password of the artist.</param>
+    /// <param name="bio">A brief biography of the artist (optional).</param>
+    /// <param name="profilePicturePath">The file path or URL of the artist's profile picture (optional).</param>
+    /// <param name="experience">The number of years of experience the artist has (optional).</param>
+    /// <returns>A task that represents the asynchronous operation.</returns>
+    Task AddAsync(
+        string firstName,
+        string lastName,
         string email,
         string passwordHash,
-        string? bio, 
-        string? profilePicturePath, 
-        int? experience);
+        string? bio = null,
+        string? profilePicturePath = null,
+        int? experience = null);
 
     /// <summary>
     /// Asynchronously updates an existing artist in the repository.
@@ -48,29 +50,45 @@ public interface IArtistRepository
     /// <param name="firstName">The updated first name of the artist.</param>
     /// <param name="lastName">The updated last name of the artist.</param>
     /// <param name="email">The updated email address of the artist.</param>
-    /// <param name="bio">The updated biography of the artist.</param>
-    /// <param name="profilePicturePath">The updated file path or URL of the artist's profile picture.</param>
-    /// <param name="experience">The updated number of years of experience the artist has.</param>
-    /// <returns>A task representing the asynchronous operation.</returns>
-    Task UpdateAsync(Guid id, 
-        string firstName, 
-        string lastName, 
-        string email, 
-        string? bio, 
-        string? profilePicturePath, 
-        int? experience);
+    /// <param name="bio">The updated biography of the artist (optional).</param>
+    /// <param name="profilePicturePath">The updated file path or URL of the artist's profile picture (optional).</param>
+    /// <param name="experience">The updated number of years of experience the artist has (optional).</param>
+    /// <returns>A task that represents the asynchronous operation.</returns>
+    Task UpdateAsync(
+        Guid id,
+        string firstName,
+        string lastName,
+        string email,
+        string? bio = null,
+        string? profilePicturePath = null,
+        int? experience = null);
 
     /// <summary>
-    /// Asynchronously deletes an artist by its unique identifier.
+    /// Asynchronously deletes an artist by their unique identifier.
     /// </summary>
     /// <param name="id">The unique identifier of the artist to delete.</param>
-    /// <returns>A task representing the asynchronous operation.</returns>
+    /// <returns>A task that represents the asynchronous operation.</returns>
     Task DeleteAsync(Guid id);
 
     /// <summary>
-    /// Asynchronously searches for artists based on a search prompt.
+    /// Asynchronously searches for artists based on a prompt.
     /// </summary>
     /// <param name="prompt">The search prompt to filter artists.</param>
-    /// <returns>A task that represents the asynchronous operation. The task result contains a collection of artists matching the search criteria.</returns>
+    /// <returns>
+    /// A task that represents the asynchronous operation.
+    /// The task result contains a collection of <see cref="Artist"/> entities matching the criteria.
+    /// </returns>
     Task<IEnumerable<Artist>> SearchByPromptAsync(string prompt);
+
+    /// <summary>
+    /// Asynchronously retrieves an artist by email and password hash.
+    /// Used for authentication purposes.
+    /// </summary>
+    /// <param name="email">The email of the artist.</param>
+    /// <param name="passwordHash">The hashed password of the artist.</param>
+    /// <returns>
+    /// A task that represents the asynchronous operation.
+    /// The task result contains the <see cref="Artist"/> if credentials match; otherwise, <c>null</c>.
+    /// </returns>
+    Task<Artist?> LoginAsync(string email, string passwordHash);
 }

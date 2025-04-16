@@ -1,26 +1,18 @@
-using System;
+using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
-using ArtLink.Dto.Validator;
 
 namespace ArtLink.Dto.Artist;
 
-public class LoginArtistDto
+public class LoginArtistDto(
+    string email,
+    string passwordHash)
 {
-    public LoginArtistDto(string email, 
-        string passwordHash)
-    {
-        if (!EmailValidator.IsValidEmail(email))
-        {
-            throw new ArgumentException("Email is not valid.", nameof(email));
-        }
-
-        Email = email;
-        PasswordHash = passwordHash;
-    }
-
+    [Required]
+    [EmailAddress]
     [JsonPropertyName("email")]
-    public string Email { get; set; }
+    public string Email { get; set; } = email;
 
+    [Required]
     [JsonPropertyName("password_hash")]
-    public string PasswordHash { get; set; }
+    public string PasswordHash { get; set; } = passwordHash;
 }

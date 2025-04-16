@@ -1,20 +1,22 @@
 using Microsoft.EntityFrameworkCore;
 using ArtLink.DataAccess.Context;
 using ArtLink.DataAccess.Repositories;
-using ArtLink.Domain.Interfaces.Repositories;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace ArtLink.Tests.Repositories
 {
     public class ArtistRepositoryTests
     {
-        private IArtistRepository GetInMemoryRepository()
+        private static ArtistRepository GetInMemoryRepository()
         {
             var options = new DbContextOptionsBuilder<ArtLinkDbContext>()
                 .UseInMemoryDatabase(Guid.NewGuid().ToString())
                 .Options;
 
             var context = new ArtLinkDbContext(options);
-            return new ArtistRepository(context);
+            var logger = NullLogger<ArtistRepository>.Instance;
+
+            return new ArtistRepository(context, logger);
         }
 
         [Fact]
@@ -22,13 +24,13 @@ namespace ArtLink.Tests.Repositories
         {
             // Arrange
             var repository = GetInMemoryRepository();
-            var firstName = "John";
-            var lastName = "Doe";
-            var email = "john.doe@example.com";
-            var passwordHash = "hashedpass";
-            var bio = "I am an artist";
-            var profilePicturePath = "profile.jpg";
-            var experience = 5;
+            const string firstName = "John";
+            const string lastName = "Doe";
+            const string email = "john.doe@example.com";
+            const string passwordHash = "hashed_pass";
+            const string bio = "I am an artist";
+            const string profilePicturePath = "profile.jpg";
+            const int experience = 5;
 
             await repository.AddAsync(firstName, lastName, email, passwordHash, bio, profilePicturePath, experience);
 
@@ -40,7 +42,7 @@ namespace ArtLink.Tests.Repositories
 
             // Assert
             Assert.NotNull(result);
-            Assert.Equal(firstName, result!.FirstName);
+            Assert.Equal(firstName, result.FirstName);
             Assert.Equal(lastName, result.LastName);
         }
 
@@ -57,7 +59,7 @@ namespace ArtLink.Tests.Repositories
             var updated = await repository.GetByIdAsync(artist.Id);
 
             Assert.NotNull(updated);
-            Assert.Equal("AliceUpdated", updated!.FirstName);
+            Assert.Equal("AliceUpdated", updated.FirstName);
             Assert.Equal("SmithUpdated", updated.LastName);
             Assert.Equal("alice@new.com", updated.Email);
             Assert.Equal("new bio", updated.Bio);

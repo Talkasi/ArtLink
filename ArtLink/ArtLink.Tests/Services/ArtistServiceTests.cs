@@ -31,7 +31,7 @@ public class ArtistServiceTests
 
         // Assert
         Assert.NotNull(result);
-        Assert.Equal(expected.Id, result!.Id);
+        Assert.Equal(expected.Id, result.Id);
     }
 
     [Fact]

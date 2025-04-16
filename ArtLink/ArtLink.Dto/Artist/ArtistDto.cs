@@ -1,51 +1,40 @@
-using System;
+using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
-using ArtLink.Dto.Validator;
 
 namespace ArtLink.Dto.Artist;
 
-public class ArtistDto
+public class ArtistDto(
+    Guid id,
+    string firstName,
+    string lastName,
+    string email,
+    string? bio = null,
+    string? profilePicturePath = null,
+    int? experience = null)
 {
-    public ArtistDto(Guid id, 
-        string firstName, 
-        string lastName, 
-        string email, 
-        string bio, 
-        string profilePicturePath, 
-        int experience)
-    {
-        if (!EmailValidator.IsValidEmail(email))
-        {
-            throw new ArgumentException("Email is not valid.", nameof(email));
-        }
-
-        Id = id;
-        FirstName = firstName;
-        LastName = lastName;
-        Email = email;
-        Bio = bio;
-        ProfilePicturePath = profilePicturePath;
-        Experience = experience;
-    }
-
+    [Required]
     [JsonPropertyName("id")]
-    public Guid Id { get; set; }
+    public Guid Id { get; set; } = id;
 
+    [Required]
     [JsonPropertyName("first_name")]
-    public string FirstName { get; set; }
+    public string FirstName { get; set; } = firstName;
 
+    [Required]
     [JsonPropertyName("last_name")]
-    public string LastName { get; set; }
+    public string LastName { get; set; } = lastName;
 
+    [Required]
+    [EmailAddress]
     [JsonPropertyName("email")]
-    public string Email { get; set; }
+    public string Email { get; set; } = email;
 
     [JsonPropertyName("bio")]
-    public string Bio { get; set; }
+    public string? Bio { get; set; } = bio;
 
     [JsonPropertyName("profile_picture_path")]
-    public string ProfilePicturePath { get; set; }
+    public string? ProfilePicturePath { get; set; } = profilePicturePath;
 
     [JsonPropertyName("experience")]
-    public int Experience { get; set; }
+    public int? Experience { get; set; } = experience;
 }

@@ -18,19 +18,19 @@ public class ArtworkService(IArtworkRepository artworkRepository) : IArtworkServ
 
     public async Task AddArtworkAsync(Guid portfolioId,
         string title,
-        string description,
-        string imagePath)
+        string imagePath,
+        string? description)
     {
-        await artworkRepository.AddAsync(portfolioId, title, description, imagePath);
+        await artworkRepository.AddAsync(portfolioId, title, imagePath, description);
     }
 
     public async Task UpdateArtworkAsync(Guid id,
         Guid portfolioId,
         string title,
-        string description,
-        string imagePath)
+        string imagePath,
+        string? description)
     {
-        await artworkRepository.UpdateAsync(id, portfolioId, title, description, imagePath);
+        await artworkRepository.UpdateAsync(id, portfolioId, title, imagePath, description);
     }
 
     public async Task DeleteArtworkAsync(Guid id)

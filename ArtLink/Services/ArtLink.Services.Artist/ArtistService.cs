@@ -16,7 +16,8 @@ public class ArtistService(IArtistRepository artistRepository) : IArtistService
         return await artistRepository.GetAllAsync();
     }
 
-    public async Task AddArtistAsync(string firstName,
+    public async Task AddArtistAsync(
+        string firstName,
         string lastName,
         string email,
         string passwordHash,
@@ -24,10 +25,18 @@ public class ArtistService(IArtistRepository artistRepository) : IArtistService
         string? profilePicturePath,
         int? experience)
     {
-        await artistRepository.AddAsync(firstName, lastName, email, passwordHash, bio, profilePicturePath, experience);
+        await artistRepository.AddAsync(
+            firstName,
+            lastName,
+            email,
+            passwordHash,
+            bio,
+            profilePicturePath,
+            experience);
     }
 
-    public async Task UpdateArtistAsync(Guid id,
+    public async Task UpdateArtistAsync(
+        Guid id,
         string firstName,
         string lastName,
         string email,
@@ -35,11 +44,23 @@ public class ArtistService(IArtistRepository artistRepository) : IArtistService
         string? profilePicturePath,
         int? experience)
     {
-        await artistRepository.UpdateAsync(id, firstName, lastName, email, bio, profilePicturePath, experience);
+        await artistRepository.UpdateAsync(
+            id,
+            firstName,
+            lastName,
+            email,
+            bio,
+            profilePicturePath,
+            experience);
     }
 
     public async Task DeleteArtistAsync(Guid id)
     {
         await artistRepository.DeleteAsync(id);
+    }
+
+    public async Task<ArtistModel?> LoginArtistAsync(string email, string passwordHash)
+    {
+        return await artistRepository.LoginAsync(email, passwordHash);
     }
 }

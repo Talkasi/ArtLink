@@ -41,16 +41,16 @@ public interface IContractRepository
     /// <param name="artistId">The unique identifier of the artist associated with the contract.</param>
     /// <param name="employerId">The unique identifier of the employer associated with the contract.</param>
     /// <param name="projectDescription">A description of the project covered by the contract.</param>
+    /// <param name="status">The current status of the contract.</param>
     /// <param name="startDate">The start date of the contract.</param>
     /// <param name="endDate">The end date of the contract.</param>
-    /// <param name="status">The current status of the contract.</param>
     /// <returns>A task representing the asynchronous operation.</returns>
-    Task AddAsync(Guid artistId, 
-        Guid employerId, 
-        string projectDescription, 
-        DateTime? startDate, 
-        DateTime? endDate, 
-        ContractState status);
+    Task AddAsync(Guid artistId,
+        Guid employerId,
+        string projectDescription,
+        ContractState status,
+        DateTime? startDate = null,
+        DateTime? endDate = null);
 
     /// <summary>
     /// Asynchronously updates an existing contract in the repository.
@@ -59,17 +59,17 @@ public interface IContractRepository
     /// <param name="artistId">The unique identifier of the artist associated with the contract.</param>
     /// <param name="employerId">The unique identifier of the employer associated with the contract.</param>
     /// <param name="projectDescription">The updated description of the project covered by the contract.</param>
+    /// <param name="status">The updated status of the contract.</param>
     /// <param name="startDate">The updated start date of the contract.</param>
     /// <param name="endDate">The updated end date of the contract.</param>
-    /// <param name="status">The updated status of the contract.</param>
     /// <returns>A task representing the asynchronous operation.</returns>
-    Task UpdateAsync(Guid id, 
-        Guid artistId, 
-        Guid employerId, 
-        string projectDescription, 
-        DateTime? startDate, 
-        DateTime? endDate, 
-        ContractState status);
+    Task UpdateAsync(Guid id,
+        Guid artistId,
+        Guid employerId,
+        string projectDescription,
+        ContractState status,
+        DateTime? startDate = null,
+        DateTime? endDate = null);
 
     /// <summary>
     /// Asynchronously deletes a contract by its unique identifier.
