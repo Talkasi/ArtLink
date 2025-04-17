@@ -78,19 +78,19 @@ public class ContractServiceTests
         // Arrange
         var artistId = Guid.NewGuid();
         var employerId = Guid.NewGuid();
-        var description = "Test Project";
+        const string description = "Test Project";
         var startDate = DateTime.Today;
         var endDate = DateTime.Today.AddDays(7);
-        var status = ContractState.Draft;
+        const ContractState status = ContractState.Draft;
 
-        _mockRepo.Setup(r => r.AddAsync(artistId, employerId, description, startDate, endDate, status))
+        _mockRepo.Setup(r => r.AddAsync(artistId, employerId, description, status, startDate, endDate))
                  .Returns(Task.CompletedTask);
 
         // Act
-        await _contractService.AddContractAsync(artistId, employerId, description, startDate, endDate, status);
+        await _contractService.AddContractAsync(artistId, employerId, description, status, startDate: startDate, endDate: endDate);
 
         // Assert
-        _mockRepo.Verify(r => r.AddAsync(artistId, employerId, description, startDate, endDate, status), Times.Once);
+        _mockRepo.Verify(r => r.AddAsync(artistId, employerId, description, status, startDate, endDate), Times.Once);
     }
 
     [Fact]
@@ -103,16 +103,16 @@ public class ContractServiceTests
         const string description = "Updated Project";
         var startDate = DateTime.Today;
         var endDate = DateTime.Today.AddDays(10);
-        var status = ContractState.Accepted;
+        const ContractState status = ContractState.Accepted;
 
-        _mockRepo.Setup(r => r.UpdateAsync(contractId, artistId, employerId, description, startDate, endDate, status))
+        _mockRepo.Setup(r => r.UpdateAsync(contractId, artistId, employerId, description, status, startDate, endDate))
                  .Returns(Task.CompletedTask);
 
         // Act
-        await _contractService.UpdateContractAsync(contractId, artistId, employerId, description, startDate, endDate, status);
+        await _contractService.UpdateContractAsync(contractId, artistId, employerId, description, status, startDate: startDate, endDate: endDate);
 
         // Assert
-        _mockRepo.Verify(r => r.UpdateAsync(contractId, artistId, employerId, description, startDate, endDate, status), Times.Once);
+        _mockRepo.Verify(r => r.UpdateAsync(contractId, artistId, employerId, description, status, startDate, endDate), Times.Once);
     }
 
     [Fact]

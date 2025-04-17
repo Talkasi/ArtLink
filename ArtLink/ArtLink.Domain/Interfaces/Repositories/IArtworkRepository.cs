@@ -29,13 +29,13 @@ public interface IArtworkRepository
     /// </summary>
     /// <param name="portfolioId">The unique identifier of the portfolio to which the artwork will be added.</param>
     /// <param name="title">The title of the artwork.</param>
-    /// <param name="description">A description of the artwork.</param>
     /// <param name="imagePath">The file path or URL of the artwork's image.</param>
+    /// <param name="description">A description of the artwork.</param>
     /// <returns>A task representing the asynchronous operation.</returns>
-    Task AddAsync(Guid portfolioId, 
-        string title, 
-        string description, 
-        string imagePath);
+    Task AddAsync(Guid portfolioId,
+        string title,
+        string imagePath,
+        string? description = null);
 
     /// <summary>
     /// Asynchronously updates an existing artwork.
@@ -43,14 +43,14 @@ public interface IArtworkRepository
     /// <param name="id">The unique identifier of the artwork to update.</param>
     /// <param name="portfolioId">The unique identifier of the portfolio to which the artwork belongs.</param>
     /// <param name="title">The updated title of the artwork.</param>
-    /// <param name="description">The updated description of the artwork.</param>
     /// <param name="imagePath">The updated file path or URL of the artwork's image.</param>
+    /// <param name="description">The updated description of the artwork.</param>
     /// <returns>A task representing the asynchronous operation.</returns>
-    Task UpdateAsync(Guid id, 
-        Guid portfolioId, 
-        string title, 
-        string description, 
-        string imagePath);
+    Task UpdateAsync(Guid id,
+        Guid portfolioId,
+        string title,
+        string imagePath,
+        string? description = null);
 
     /// <summary>
     /// Asynchronously deletes an artwork by its unique identifier.

@@ -18,19 +18,19 @@ public class PortfolioService(IPortfolioRepository portfolioRepository) : IPortf
 
     public async Task AddPortfolioAsync(Guid artistId,
         string title,
-        string? description,
-        Guid techniqueId)
+        Guid techniqueId,
+        string? description)
     {
-        await portfolioRepository.AddAsync(artistId, title, description, techniqueId);
+        await portfolioRepository.AddAsync(artistId, title, techniqueId, description);
     }
 
     public async Task UpdatePortfolioAsync(Guid id,
         Guid artistId,
         string title,
-        string? description,
-        Guid techniqueId)
+        Guid techniqueId,
+        string? description)
     {
-        await portfolioRepository.UpdateAsync(id, artistId, title, description, techniqueId);
+        await portfolioRepository.UpdateAsync(id, artistId, title, techniqueId, description);
     }
 
     public async Task DeletePortfolioAsync(Guid id)

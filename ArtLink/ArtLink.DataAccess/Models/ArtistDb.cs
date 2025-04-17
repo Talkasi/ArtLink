@@ -2,55 +2,45 @@
 
 namespace ArtLink.DataAccess.Models;
 
-public class ArtistDb
+public class ArtistDb(
+    Guid id,
+    string passwordHash,
+    string email,
+    string firstName,
+    string lastName,
+    string? bio = null,
+    int? experience = null,
+    string? profilePicturePath = null)
 {
-    public ArtistDb(Guid id, 
-        string passwordHash, 
-        string email, 
-        string firstName, 
-        string lastName, 
-        string? bio = null, 
-        int? experience = null, 
-        string? profilePicturePath = null)
-    {
-        Id = id;
-        PasswordHash = passwordHash;
-        Email = email;
-        FirstName = firstName;
-        LastName = lastName;
-        Bio = bio;
-        Experience = experience;
-        ProfilePicturePath = profilePicturePath;
-    }
-
     [Key]
-    public Guid Id { get; set; }
+    public Guid Id { get; init; } = id;
 
     [Required]
     [MaxLength(255)]
-    public string PasswordHash { get; set; }
+    public string PasswordHash { get; init; } = passwordHash;
 
     [Required]
     [MaxLength(255)]
-    public string Email { get; set; }
+    public string Email { get; set; } = email;
 
     [Required]
     [MaxLength(100)]
-    public string FirstName { get; set; }
+    public string FirstName { get; set; } = firstName;
 
     [Required]
     [MaxLength(100)]
-    public string LastName { get; set; }
+    public string LastName { get; set; } = lastName;
 
     [MaxLength(1000)]
-    public string? Bio { get; set; }
+    public string? Bio { get; set; } = bio;
 
-    public int? Experience { get; set; }
+    public int? Experience { get; set; } = experience;
 
     [MaxLength(500)]
-    public string? ProfilePicturePath { get; set; }
+    public string? ProfilePicturePath { get; set; } = profilePicturePath;
 
     public List<PortfolioDb> Portfolios { get; init; } = [];
+
     public List<ContractDb> Contracts { get; init; } = [];
 }
 

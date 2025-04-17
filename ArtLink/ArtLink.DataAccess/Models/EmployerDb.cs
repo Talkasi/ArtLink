@@ -2,45 +2,36 @@ using System.ComponentModel.DataAnnotations;
 
 namespace ArtLink.DataAccess.Models;
 
-public class EmployerDb
+public class EmployerDb(
+    Guid id,
+    string companyName,
+    string email,
+    string passwordHash,
+    string cpFirstName,
+    string cpLastName)
 {
-    public EmployerDb(Guid id, 
-        string companyName, 
-        string email, 
-        string passwordHash, 
-        string cpFirstName, 
-        string cpLastName)
-    {
-        Id = id;
-        CompanyName = companyName;
-        Email = email;
-        PasswordHash = passwordHash;
-        CpFirstName = cpFirstName;
-        CpLastName = cpLastName;
-    }
-
     [Key]
-    public Guid Id { get; set; }
+    public Guid Id { get; init; } = id;
 
     [Required]
     [MaxLength(255)]
-    public string CompanyName { get; set; }
+    public string CompanyName { get; set; } = companyName;
 
     [Required]
     [MaxLength(255)]
-    public string Email { get; set; }
+    public string Email { get; set; } = email;
 
     [Required]
     [MaxLength(255)]
-    public string PasswordHash { get; set; }
+    public string PasswordHash { get; init; } = passwordHash;
 
     [Required]
     [MaxLength(100)]
-    public string CpFirstName { get; set; }
+    public string CpFirstName { get; set; } = cpFirstName;
 
     [Required]
     [MaxLength(100)]
-    public string CpLastName { get; set; }
+    public string CpLastName { get; set; } = cpLastName;
 
     public List<ContractDb> Contracts { get; init; } = [];
 }

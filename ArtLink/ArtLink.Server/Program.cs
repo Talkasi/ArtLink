@@ -1,5 +1,7 @@
+using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 using ArtLink.DataAccess.Context;
+using ArtLink.DataAccess.Extensions;
 using ArtLink.DataAccess.Repositories;
 using ArtLink.Domain.Interfaces.Repositories;
 using ArtLink.Domain.Interfaces.Services;
@@ -9,7 +11,7 @@ using ArtLink.Services.Contract;
 using ArtLink.Services.Employer;
 using ArtLink.Services.Portfolio;
 using ArtLink.Services.Search;
-using ArtLink.DataAccess.Extensions;
+using ArtLink.Services.Technique;
 
 namespace ArtLink.Server;
 
@@ -21,24 +23,30 @@ public class Program
 
         builder.Services.AddCors();
 
-        // Add services to the container.
-
         builder.Services.AddControllers();
         
-        // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
-        //builder.Services.AddSwaggerGen();
         
+        builder.Services.AddSwaggerGen(options =>
+        {
+            var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+            options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
+        });
+        
+        var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
         builder.Services.AddDbContext<ArtLinkDbContext>(options =>
-                options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")),
-            ServiceLifetime.Transient,
-            ServiceLifetime.Transient).Migrate<ArtLinkDbContext>();
+            options.UseNpgsql(connectionString));
+        
+        builder.Services.Migrate<ArtLinkDbContext>();
+
 
         builder.Services.AddTransient<IArtworkRepository, ArtworkRepository>();
         builder.Services.AddTransient<IArtistRepository, ArtistRepository>();
         builder.Services.AddTransient<IContractRepository, ContractRepository>();
         builder.Services.AddTransient<IEmployerRepository, EmployerRepository>();
         builder.Services.AddTransient<IPortfolioRepository, PortfolioRepository>();
+        builder.Services.AddTransient<ITechniqueRepository, TechniqueRepository>();
         
         builder.Services.AddTransient<IArtistService, ArtistService>();
         builder.Services.AddTransient<IArtworkService, ArtworkService>();
@@ -46,11 +54,18 @@ public class Program
         builder.Services.AddTransient<IEmployerService, EmployerService>();
         builder.Services.AddTransient<IPortfolioService, PortfolioService>();
         builder.Services.AddTransient<ISearchService, SearchService>();
-        
+        builder.Services.AddTransient<ITechniqueService, TechniqueService>();
         
         var app = builder.Build();
 
         app.UseHttpsRedirection();
+        
+        if (app.Environment.IsDevelopment())
+        {
+            app.UseSwagger();
+            app.UseSwaggerUI();
+        }
+
 
         app.UseCors(b =>
         {
@@ -58,7 +73,7 @@ public class Program
             b.AllowAnyHeader();
             b.AllowAnyMethod();
         });
-
+        
         app.UseAuthorization();
         
         app.MapControllers();

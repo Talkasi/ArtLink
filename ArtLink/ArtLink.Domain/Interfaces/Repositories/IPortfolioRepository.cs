@@ -29,13 +29,13 @@ public interface IPortfolioRepository
     /// </summary>
     /// <param name="artistId">The unique identifier of the artist to whom the portfolio belongs.</param>
     /// <param name="title">The title of the portfolio.</param>
-    /// <param name="description">A description of the portfolio.</param>
     /// <param name="techniqueId">The unique identifier of the technique used in the portfolio.</param>
+    /// <param name="description">A description of the portfolio.</param>
     /// <returns>A task representing the asynchronous operation.</returns>
-    Task AddAsync(Guid artistId, 
-        string title, 
-        string? description, 
-        Guid techniqueId);
+    Task AddAsync(Guid artistId,
+        string title,
+        Guid techniqueId,
+        string? description = null);
 
     /// <summary>
     /// Asynchronously updates an existing portfolio in the repository.
@@ -43,14 +43,14 @@ public interface IPortfolioRepository
     /// <param name="id">The unique identifier of the portfolio to update.</param>
     /// <param name="artistId">The unique identifier of the artist to whom the portfolio belongs.</param>
     /// <param name="title">The updated title of the portfolio.</param>
-    /// <param name="description">The updated description of the portfolio.</param>
     /// <param name="techniqueId">The unique identifier of the updated technique used in the portfolio.</param>
+    /// <param name="description">The updated description of the portfolio.</param>
     /// <returns>A task representing the asynchronous operation.</returns>
-    Task UpdateAsync(Guid id, 
-        Guid artistId, 
-        string title, 
-        string? description, 
-        Guid techniqueId);
+    Task UpdateAsync(Guid id,
+        Guid artistId,
+        string title,
+        Guid techniqueId,
+        string? description = null);
 
     /// <summary>
     /// Asynchronously deletes a portfolio by its unique identifier.

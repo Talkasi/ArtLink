@@ -1,41 +1,33 @@
-using System;
+using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
-using ArtLink.Dto.Validator;
 
 namespace ArtLink.Dto.Employer;
 
-public class EmployerDto
+public class EmployerDto(
+    Guid id,
+    string companyName,
+    string email,
+    string cpFirstName,
+    string cpLastName)
 {
-    public EmployerDto(Guid id, 
-        string companyName, 
-        string email, 
-        string cpFirstName, 
-        string cpLastName)
-    {
-        if (!EmailValidator.IsValidEmail(email))
-        {
-            throw new ArgumentException("Email is not valid.", nameof(email));
-        }
-
-        Id = id;
-        CompanyName = companyName;
-        Email = email;
-        CPFirstName = cpFirstName;
-        CPLastName = cpLastName;
-    }
-
+    [Required]
     [JsonPropertyName("id")]
-    public Guid Id { get; set; }
+    public Guid Id { get; set; } = id;
 
+    [Required]
     [JsonPropertyName("company_name")]
-    public string CompanyName { get; set; }
+    public string CompanyName { get; set; } = companyName;
 
+    [Required]
+    [EmailAddress]
     [JsonPropertyName("email")]
-    public string Email { get; set; }
+    public string Email { get; set; } = email;
 
+    [Required]
     [JsonPropertyName("cp_first_name")]
-    public string CPFirstName { get; set; }
+    public string CpFirstName { get; set; } = cpFirstName;
 
+    [Required]
     [JsonPropertyName("cp_last_name")]
-    public string CPLastName { get; set; }
+    public string CpLastName { get; set; } = cpLastName;
 }

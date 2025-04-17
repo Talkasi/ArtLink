@@ -5,12 +5,12 @@ namespace ArtLink.Domain.Interfaces.Services;
 public interface IEmployerService
 {
     /// <summary>
-    /// Asynchronously retrieves an employer by its unique identifier.
+    /// Asynchronously retrieves an employer by their unique identifier.
     /// </summary>
     /// <param name="id">The unique identifier of the employer to retrieve.</param>
     /// <returns>
-    /// A task that represents the asynchronous operation. 
-    /// The task result contains the employer if found; otherwise, it is null.
+    /// A task that represents the asynchronous operation.
+    /// The task result contains the <see cref="Employer"/> if found; otherwise, <c>null</c>.
     /// </returns>
     Task<Employer?> GetEmployerByIdAsync(Guid id);
 
@@ -18,8 +18,8 @@ public interface IEmployerService
     /// Asynchronously retrieves all employers in the system.
     /// </summary>
     /// <returns>
-    /// A task that represents the asynchronous operation. 
-    /// The task result contains a collection of all employers.
+    /// A task that represents the asynchronous operation.
+    /// The task result contains a collection of <see cref="Employer"/> entities.
     /// </returns>
     Task<IEnumerable<Employer>> GetAllEmployersAsync();
 
@@ -28,34 +28,48 @@ public interface IEmployerService
     /// </summary>
     /// <param name="companyName">The name of the company associated with the employer.</param>
     /// <param name="email">The email address of the employer.</param>
+    /// <param name="passwordHash">The hashed password of the employer.</param>
     /// <param name="cpFirstName">The first name of the contact person.</param>
     /// <param name="cpLastName">The last name of the contact person.</param>
-    /// <returns>A task representing the asynchronous operation.</returns>
-    Task AddEmployerAsync(string companyName, 
-        string email, 
+    /// <returns>A task that represents the asynchronous operation.</returns>
+    Task AddEmployerAsync(
+        string companyName,
+        string email,
         string passwordHash,
-        string cpFirstName, 
+        string cpFirstName,
         string cpLastName);
 
     /// <summary>
     /// Asynchronously updates an existing employer's information.
     /// </summary>
     /// <param name="id">The unique identifier of the employer to update.</param>
-    /// <param name="companyName">The new name of the company associated with the employer.</param>
-    /// <param name="email">The new email address of the employer.</param>
-    /// <param name="cpFirstName">The new first name of the contact person.</param>
-    /// <param name="cpLastName">The new last name of the contact person.</param>
-    /// <returns>A task representing the asynchronous operation.</returns>
-    Task UpdateEmployerAsync(Guid id, 
-        string companyName, 
-        string email, 
-        string cpFirstName, 
+    /// <param name="companyName">The updated company name.</param>
+    /// <param name="email">The updated email address.</param>
+    /// <param name="cpFirstName">The updated contact person's first name.</param>
+    /// <param name="cpLastName">The updated contact person's last name.</param>
+    /// <returns>A task that represents the asynchronous operation.</returns>
+    Task UpdateEmployerAsync(
+        Guid id,
+        string companyName,
+        string email,
+        string cpFirstName,
         string cpLastName);
 
     /// <summary>
-    /// Asynchronously deletes an employer by its unique identifier.
+    /// Asynchronously deletes an employer from the system.
     /// </summary>
     /// <param name="id">The unique identifier of the employer to delete.</param>
-    /// <returns>A task representing the asynchronous operation.</returns>
+    /// <returns>A task that represents the asynchronous operation.</returns>
     Task DeleteEmployerAsync(Guid id);
+
+    /// <summary>
+    /// Asynchronously logs in an employer using their email and password hash.
+    /// </summary>
+    /// <param name="email">The email address of the employer.</param>
+    /// <param name="passwordHash">The hashed password of the employer.</param>
+    /// <returns>
+    /// A task that represents the asynchronous operation.
+    /// The task result contains the <see cref="Employer"/> if credentials are valid; otherwise, <c>null</c>.
+    /// </returns>
+    Task<Employer?> LoginEmployerAsync(string email, string passwordHash);
 }

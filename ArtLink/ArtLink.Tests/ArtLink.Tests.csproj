@@ -31,10 +31,7 @@
       <ProjectReference Include="..\Services\ArtLink.Services.Employer\ArtLink.Services.Employer.csproj" />
       <ProjectReference Include="..\Services\ArtLink.Services.Portfolio\ArtLink.Services.Portfolio.csproj" />
       <ProjectReference Include="..\Services\ArtLink.Services.Search\ArtLink.Services.Search.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="Repositories\" />
+      <ProjectReference Include="..\Services\ArtLink.Services.Technique\ArtLink.Services.Technique.csproj" />
     </ItemGroup>
 
 </Project>

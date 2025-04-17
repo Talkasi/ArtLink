@@ -2,39 +2,31 @@ using System.ComponentModel.DataAnnotations;
 
 namespace ArtLink.DataAccess.Models;
 
-public class PortfolioDb
+public class PortfolioDb(
+    Guid id,
+    Guid artistId,
+    Guid techniqueId,
+    string title,
+    string? description = null)
 {
-    public PortfolioDb(Guid id,
-        Guid artistId,
-        Guid techniqueId,
-        string title,
-        string? description = null)
-    {
-        Id = id;
-        ArtistId = artistId;
-        TechniqueId = techniqueId;
-        Title = title;
-        Description = description;
-    }
-
     [Key]
-    public Guid Id { get; set; }
+    public Guid Id { get; init; } = id;
 
     [Required]
-    public Guid ArtistId { get; set; }
+    public Guid ArtistId { get; set; } = artistId;
 
     [Required]
-    public Guid TechniqueId { get; set; }
+    public Guid TechniqueId { get; set; } = techniqueId;
 
     [Required]
     [MaxLength(200)]
-    public string Title { get; set; }
+    public string Title { get; set; } = title;
 
     [MaxLength(2000)]
-    public string? Description { get; set; }
+    public string? Description { get; set; } = description;
 
-    public ArtistDb? Artist { get; set; }
-    public TechniqueDb? Technique { get; set; }
-
+    public ArtistDb? Artist { get; init; }
+    public TechniqueDb? Technique { get; init; }
+    
     public List<ArtworkDb> Artworks { get; init; } = [];
 }
