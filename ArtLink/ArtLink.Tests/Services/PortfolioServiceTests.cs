@@ -1,6 +1,7 @@
 ﻿using ArtLink.Services.Portfolio;
 using ArtLink.Domain.Interfaces.Repositories;
 using ArtLink.Domain.Models;
+using Microsoft.Extensions.Logging;
 using Moq;
 
 namespace ArtLink.Tests.Services;
@@ -13,7 +14,8 @@ public class PortfolioServiceTests
     public PortfolioServiceTests()
     {
         _portfolioRepoMock = new Mock<IPortfolioRepository>();
-        _portfolioService = new PortfolioService(_portfolioRepoMock.Object);
+        var loggerMock =  new Mock<ILogger<PortfolioService>>();
+        _portfolioService = new PortfolioService(_portfolioRepoMock.Object, loggerMock.Object);
     }
 
     [Fact]

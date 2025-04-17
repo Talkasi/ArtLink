@@ -1,6 +1,7 @@
 ﻿using ArtLink.Domain.Interfaces.Repositories;
 using ArtLink.Domain.Models;
 using ArtLink.Services.Employer;
+using Microsoft.Extensions.Logging;
 using Moq;
 
 namespace ArtLink.Tests.Services;
@@ -13,7 +14,8 @@ public class EmployerServiceTests
     public EmployerServiceTests()
     {
         _employerRepositoryMock = new Mock<IEmployerRepository>();
-        _employerService = new EmployerService(_employerRepositoryMock.Object);
+        var loggerMock =  new Mock<ILogger<EmployerService>>();
+        _employerService = new EmployerService(_employerRepositoryMock.Object, loggerMock.Object);
     }
 
     [Fact]
@@ -69,7 +71,7 @@ public class EmployerServiceTests
 
         // Assert
         _employerRepositoryMock.Verify(r => r.AddAsync(
-            companyName, email, cpFirstName, cpLastName, passwordHash), Times.Once);
+            companyName, email, passwordHash, cpFirstName, cpLastName), Times.Once);
     }
 
     [Fact]

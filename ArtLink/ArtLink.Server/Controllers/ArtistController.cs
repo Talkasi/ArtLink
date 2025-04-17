@@ -17,14 +17,17 @@ public class ArtistController(IArtistService service, ILogger<ArtistController> 
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody][Required] RegisterArtistDto dto)
     {
+        logger.LogInformation("[ArtistController][Register] Attempting to register artist with email: {Email}", dto.Email);
+
         try
         {
             await service.AddArtistAsync(dto.FirstName, dto.LastName, dto.Email, dto.PasswordHash, dto.Bio, dto.ProfilePicturePath, dto.Experience);
+            logger.LogInformation("[ArtistController][Register] Successfully registered artist: {Email}", dto.Email);
             return Ok();
         }
         catch (Exception e)
         {
-            logger.LogError(e, "Error registering artist");
+            logger.LogError(e, "[ArtistController][Register] Error registering artist: {Email}", dto.Email);
             return StatusCode(500);
         }
     }
@@ -37,16 +40,23 @@ public class ArtistController(IArtistService service, ILogger<ArtistController> 
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody][Required] LoginArtistDto dto)
     {
+        logger.LogInformation("[ArtistController][Login] Attempting login for artist with email: {Email}", dto.Email);
+
         try
         {
             var artist = await service.LoginArtistAsync(dto.Email, dto.PasswordHash);
-            if (artist == null) return Unauthorized();
+            if (artist == null)
+            {
+                logger.LogWarning("[ArtistController][Login] Login failed for artist with email: {Email}", dto.Email);
+                return Unauthorized();
+            }
 
+            logger.LogInformation("[ArtistController][Login] Login successful for artist: {Email}", dto.Email);
             return Ok(new ArtistDto(artist.Id, artist.FirstName, artist.LastName, artist.Email, artist.Bio, artist.ProfilePicturePath, artist.Experience));
         }
         catch (Exception e)
         {
-            logger.LogError(e, "Error logging in artist");
+            logger.LogError(e, "[ArtistController][Login] Error logging in artist: {Email}", dto.Email);
             return StatusCode(500);
         }
     }
@@ -59,16 +69,23 @@ public class ArtistController(IArtistService service, ILogger<ArtistController> 
     [HttpGet("{id:guid}")]
     public async Task<IActionResult> GetById([FromRoute][Required] Guid id)
     {
+        logger.LogInformation("[ArtistController][GetById] Request to get artist with ID: {ArtistId}", id);
+
         try
         {
             var artist = await service.GetArtistByIdAsync(id);
-            if (artist == null) return NotFound();
+            if (artist == null)
+            {
+                logger.LogWarning("[ArtistController][GetById] Artist not found: {ArtistId}", id);
+                return NotFound();
+            }
 
+            logger.LogInformation("[ArtistController][GetById] Artist found: {ArtistId}", id);
             return Ok(new ArtistDto(artist.Id, artist.FirstName, artist.LastName, artist.Email, artist.Bio, artist.ProfilePicturePath, artist.Experience));
         }
         catch (Exception e)
         {
-            logger.LogError(e, "Error in GetById");
+            logger.LogError(e, "[ArtistController][GetById] Error retrieving artist: {ArtistId}", id);
             return StatusCode(500);
         }
     }
@@ -82,14 +99,17 @@ public class ArtistController(IArtistService service, ILogger<ArtistController> 
     [HttpPut("{id:guid}")]
     public async Task<IActionResult> Update([FromRoute][Required] Guid id, [FromBody][Required] RegisterArtistDto dto)
     {
+        logger.LogInformation("[ArtistController][Update] Attempting to update artist with ID: {ArtistId}", id);
+
         try
         {
             await service.UpdateArtistAsync(id, dto.FirstName, dto.LastName, dto.Email, dto.Bio, dto.ProfilePicturePath, dto.Experience);
+            logger.LogInformation("[ArtistController][Update] Successfully updated artist with ID: {ArtistId}", id);
             return Ok();
         }
         catch (Exception e)
         {
-            logger.LogError(e, "Error updating artist");
+            logger.LogError(e, "[ArtistController][Update] Error updating artist: {ArtistId}", id);
             return StatusCode(500);
         }
     }
@@ -102,14 +122,17 @@ public class ArtistController(IArtistService service, ILogger<ArtistController> 
     [HttpDelete("{id:guid}")]
     public async Task<IActionResult> Delete([FromRoute][Required] Guid id)
     {
+        logger.LogInformation("[ArtistController][Delete] Attempting to delete artist with ID: {ArtistId}", id);
+
         try
         {
             await service.DeleteArtistAsync(id);
+            logger.LogInformation("[ArtistController][Delete] Successfully deleted artist with ID: {ArtistId}", id);
             return Ok();
         }
         catch (Exception e)
         {
-            logger.LogError(e, "Error deleting artist");
+            logger.LogError(e, "[ArtistController][Delete] Error deleting artist: {ArtistId}", id);
             return StatusCode(500);
         }
     }

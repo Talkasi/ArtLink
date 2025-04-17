@@ -1,6 +1,7 @@
 using ArtLink.Domain.Interfaces.Repositories;
 using ArtLink.Domain.Models;
 using ArtLink.Services.Artist;
+using Microsoft.Extensions.Logging;
 using Moq;
 
 namespace ArtLink.Tests.Services;
@@ -13,7 +14,8 @@ public class ArtistServiceTests
     public ArtistServiceTests()
     {
         _artistRepositoryMock = new Mock<IArtistRepository>();
-        _artistService = new ArtistService(_artistRepositoryMock.Object);
+        var loggerMock = new Mock<ILogger<ArtistService>>();
+        _artistService = new ArtistService(_artistRepositoryMock.Object, loggerMock.Object);
     }
 
     [Fact]
