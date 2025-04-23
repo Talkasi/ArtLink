@@ -16,14 +16,18 @@ public class TechniqueController(ITechniqueService techniqueService, ILogger<Tec
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
+        logger.LogInformation("[TechniqueController][GetAll] Getting all techniques");
+
         try
         {
-            var techniques = await techniqueService.GetAllAsync();
+            var techniques = (await techniqueService.GetAllAsync()).ToList();
+            logger.LogInformation("[TechniqueController][GetAll] Retrieved {Count} techniques", techniques.Count);
+
             return Ok(techniques.Select(t => new TechniqueDto(t.Id, t.Name, t.Description)));
         }
         catch (Exception e)
         {
-            logger.LogError(e, "Error in {method}", nameof(GetAll));
+            logger.LogError(e, "[TechniqueController][GetAll] Error retrieving techniques");
             return StatusCode(500);
         }
     }
@@ -36,14 +40,18 @@ public class TechniqueController(ITechniqueService techniqueService, ILogger<Tec
     [HttpPost]
     public async Task<IActionResult> Add([FromBody][Required] CreateTechniqueDto dto)
     {
+        logger.LogInformation("[TechniqueController][Add] Adding technique with name: {Name}", dto.Name);
+
         try
         {
             await techniqueService.AddTechniqueAsync(dto.Name, dto.Description);
+            logger.LogInformation("[TechniqueController][Add] Technique added: {Name}", dto.Name);
+
             return Ok();
         }
         catch (Exception e)
         {
-            logger.LogError(e, "Error in {method}", nameof(Add));
+            logger.LogError(e, "[TechniqueController][Add] Error adding technique: {Name}", dto.Name);
             return StatusCode(500);
         }
     }
@@ -57,14 +65,18 @@ public class TechniqueController(ITechniqueService techniqueService, ILogger<Tec
     [HttpPut("{id:guid}")]
     public async Task<IActionResult> Update([FromRoute][Required] Guid id, [FromBody][Required] CreateTechniqueDto dto)
     {
+        logger.LogInformation("[TechniqueController][Update] Updating technique {Id} with name: {Name}", id, dto.Name);
+
         try
         {
             await techniqueService.UpdateTechniqueAsync(id, dto.Name, dto.Description);
+            logger.LogInformation("[TechniqueController][Update] Technique updated: {Id}", id);
+
             return Ok();
         }
         catch (Exception e)
         {
-            logger.LogError(e, "Error in {method}", nameof(Update));
+            logger.LogError(e, "[TechniqueController][Update] Error updating technique: {Id}", id);
             return StatusCode(500);
         }
     }
@@ -77,14 +89,18 @@ public class TechniqueController(ITechniqueService techniqueService, ILogger<Tec
     [HttpDelete("{id:guid}")]
     public async Task<IActionResult> Delete([FromRoute][Required] Guid id)
     {
+        logger.LogInformation("[TechniqueController][Delete] Deleting technique {Id}", id);
+
         try
         {
             await techniqueService.DeleteTechniqueAsync(id);
+            logger.LogInformation("[TechniqueController][Delete] Technique deleted: {Id}", id);
+
             return Ok();
         }
         catch (Exception e)
         {
-            logger.LogError(e, "Error in {method}", nameof(Delete));
+            logger.LogError(e, "[TechniqueController][Delete] Error deleting technique: {Id}", id);
             return StatusCode(500);
         }
     }

@@ -1,5 +1,6 @@
 ﻿using ArtLink.Domain.Interfaces.Repositories;
 using ArtLink.Services.Technique;
+using Microsoft.Extensions.Logging;
 using Moq;
 
 namespace ArtLink.Tests.Services;
@@ -10,7 +11,8 @@ public class TechniqueServiceTests
     public async Task AddAsync_ShouldCallRepository()
     {
         var mock = new Mock<ITechniqueRepository>();
-        var service = new TechniqueService(mock.Object);
+        var loggerMock =  new Mock<ILogger<TechniqueService>>();
+        var service = new TechniqueService(mock.Object, loggerMock.Object);
 
         await service.AddTechniqueAsync("Digital", "Tablet drawing");
 
@@ -21,7 +23,8 @@ public class TechniqueServiceTests
     public async Task UpdateAsync_ShouldCallRepository()
     {
         var mock = new Mock<ITechniqueRepository>();
-        var service = new TechniqueService(mock.Object);
+        var loggerMock =  new Mock<ILogger<TechniqueService>>();
+        var service = new TechniqueService(mock.Object, loggerMock.Object);
         var id = Guid.NewGuid();
 
         await service.UpdateTechniqueAsync(id, "Updated", "Desc");
@@ -33,7 +36,8 @@ public class TechniqueServiceTests
     public async Task DeleteAsync_ShouldCallRepository()
     {
         var mock = new Mock<ITechniqueRepository>();
-        var service = new TechniqueService(mock.Object);
+        var loggerMock =  new Mock<ILogger<TechniqueService>>();
+        var service = new TechniqueService(mock.Object, loggerMock.Object);
         var id = Guid.NewGuid();
 
         await service.DeleteTechniqueAsync(id);
@@ -54,7 +58,8 @@ public class TechniqueServiceTests
 
         mock.Setup(r => r.GetAllAsync()).ReturnsAsync(expected);
 
-        var service = new TechniqueService(mock.Object);
+        var loggerMock =  new Mock<ILogger<TechniqueService>>();
+        var service = new TechniqueService(mock.Object, loggerMock.Object);
         var result = await service.GetAllAsync();
 
         Assert.Equal(expected, result);

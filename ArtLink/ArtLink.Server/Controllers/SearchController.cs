@@ -19,14 +19,18 @@ public class SearchController(ISearchService service, ILogger<SearchController> 
     [HttpGet("artists")]
     public async Task<IActionResult> SearchArtists([FromQuery][Required] string prompt)
     {
+        logger.LogInformation("[SearchController][SearchArtists] Searching artists with prompt: {Prompt}", prompt);
+
         try
         {
-            var result = await service.SearchArtistsByPromptAsync(prompt);
+            var result = (await service.SearchArtistsByPromptAsync(prompt)).ToList();
+            logger.LogInformation("[SearchController][SearchArtists] Found {Count} artists", result.Count);
+
             return Ok(result.Select(a => new ArtistDto(a.Id, a.FirstName, a.LastName, a.Email, a.Bio!, a.ProfilePicturePath!, a.Experience ?? 0)).ToList());
         }
         catch (Exception e)
         {
-            logger.LogError(e, "Error searching artists");
+            logger.LogError(e, "[SearchController][SearchArtists] Error searching artists with prompt: {Prompt}", prompt);
             return StatusCode(500);
         }
     }
@@ -39,14 +43,18 @@ public class SearchController(ISearchService service, ILogger<SearchController> 
     [HttpGet("employers")]
     public async Task<IActionResult> SearchEmployers([FromQuery][Required] string prompt)
     {
+        logger.LogInformation("[SearchController][SearchEmployers] Searching employers with prompt: {Prompt}", prompt);
+
         try
         {
-            var result = await service.SearchEmployersByPromptAsync(prompt);
+            var result = (await service.SearchEmployersByPromptAsync(prompt)).ToList();
+            logger.LogInformation("[SearchController][SearchEmployers] Found {Count} employers", result.Count);
+
             return Ok(result.Select(e => new EmployerDto(e.Id, e.CompanyName, e.Email, e.CpFirstName, e.CpLastName)).ToList());
         }
         catch (Exception e)
         {
-            logger.LogError(e, "Error searching employers");
+            logger.LogError(e, "[SearchController][SearchEmployers] Error searching employers with prompt: {Prompt}", prompt);
             return StatusCode(500);
         }
     }
@@ -59,14 +67,18 @@ public class SearchController(ISearchService service, ILogger<SearchController> 
     [HttpGet("artworks")]
     public async Task<IActionResult> SearchArtworks([FromQuery][Required] string prompt)
     {
+        logger.LogInformation("[SearchController][SearchArtworks] Searching artworks with prompt: {Prompt}", prompt);
+
         try
         {
-            var result = await service.SearchArtWorksByPromptAsync(prompt);
+            var result = (await service.SearchArtWorksByPromptAsync(prompt)).ToList();
+            logger.LogInformation("[SearchController][SearchArtworks] Found {Count} artworks", result.Count);
+
             return Ok(result.Select(a => new ArtworkDto(a.Id, a.PortfolioId, a.Title, a.ImagePath, a.Description)).ToList());
         }
         catch (Exception e)
         {
-            logger.LogError(e, "Error searching artworks");
+            logger.LogError(e, "[SearchController][SearchArtworks] Error searching artworks with prompt: {Prompt}", prompt);
             return StatusCode(500);
         }
     }

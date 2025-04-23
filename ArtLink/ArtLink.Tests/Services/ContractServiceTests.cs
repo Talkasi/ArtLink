@@ -3,6 +3,7 @@ using ArtLink.Domain.Models;
 using ArtLink.Domain.Interfaces.Repositories;
 using ArtLink.Domain.Models.Enums;
 using ArtLink.Services.Contract;
+using Microsoft.Extensions.Logging;
 
 namespace ArtLink.Tests.Services;
 
@@ -14,7 +15,8 @@ public class ContractServiceTests
     public ContractServiceTests()
     {
         _mockRepo = new Mock<IContractRepository>();
-        _contractService = new ContractService(_mockRepo.Object);
+        var loggerMock =  new Mock<ILogger<ContractService>>();
+        _contractService = new ContractService(_mockRepo.Object, loggerMock.Object);
     }
 
     [Fact]
