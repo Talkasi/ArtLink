@@ -13,6 +13,7 @@ using ArtLink.Services.Employer;
 using ArtLink.Services.Portfolio;
 using ArtLink.Services.Search;
 using ArtLink.Services.Technique;
+using Serilog.Events;
 
 namespace ArtLink.Server;
 
@@ -22,16 +23,20 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
         
-        Log.Logger = new LoggerConfiguration()
-            .ReadFrom.Configuration(builder.Configuration)
-            .WriteTo.File(
-                path: "Logs/app.log",
-                rollingInterval: RollingInterval.Day,
-                retainedFileCountLimit: 7,
-                outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}"
-            )
-            .CreateLogger();
-
+        try
+        {
+            Log.Logger = new LoggerConfiguration()
+                .ReadFrom.Configuration(builder.Configuration)
+                .CreateLogger();
+            
+            Log.Information("Log started.");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Logger error: {ex.Message}");
+            Environment.Exit(1);
+        }
+        
         builder.Host.UseSerilog();
 
         builder.Services.AddCors();
