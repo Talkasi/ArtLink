@@ -55,7 +55,7 @@ public class EmployerRepository(ArtLinkDbContext context, ILogger<EmployerReposi
         }
     }
 
-    public async Task AddAsync(string companyName,
+    public async Task<Guid> AddAsync(string companyName,
         string email,
         string passwordHash,
         string cpFirstName,
@@ -76,6 +76,8 @@ public class EmployerRepository(ArtLinkDbContext context, ILogger<EmployerReposi
             await context.SaveChangesAsync();
 
             logger.LogInformation("[{Class}][{Method}] Added employer with email {Email}.", ClassName, method, email);
+
+            return employerDb.Id;
         }
         catch (Exception e)
         {

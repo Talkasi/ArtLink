@@ -59,7 +59,7 @@ public class ContractService(IContractRepository contractRepository, ILogger<Con
         }
     }
 
-    public async Task AddContractAsync(Guid artistId,
+    public async Task<Guid> AddContractAsync(Guid artistId,
         Guid employerId,
         string projectDescription,
         ContractState status,
@@ -69,8 +69,9 @@ public class ContractService(IContractRepository contractRepository, ILogger<Con
         try
         {
             logger.LogInformation("[ContractService][Add] Adding new contract for artist with ID: {ArtistId}, employer with ID: {EmployerId}", artistId, employerId);
-            await contractRepository.AddAsync(artistId, employerId, projectDescription, status, startDate, endDate);
+            var id = await contractRepository.AddAsync(artistId, employerId, projectDescription, status, startDate, endDate);
             logger.LogInformation("[ContractService][Add] Successfully added contract for artist with ID: {ArtistId}, employer with ID: {EmployerId}", artistId, employerId);
+            return id;
         }
         catch (Exception e)
         {

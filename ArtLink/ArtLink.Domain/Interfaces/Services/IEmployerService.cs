@@ -32,7 +32,7 @@ public interface IEmployerService
     /// <param name="cpFirstName">The first name of the contact person.</param>
     /// <param name="cpLastName">The last name of the contact person.</param>
     /// <returns>A task that represents the asynchronous operation.</returns>
-    Task AddEmployerAsync(
+    Task<Guid> AddEmployerAsync(
         string companyName,
         string email,
         string passwordHash,

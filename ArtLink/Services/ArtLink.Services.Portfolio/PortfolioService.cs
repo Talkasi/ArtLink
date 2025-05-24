@@ -42,13 +42,14 @@ public class PortfolioService(IPortfolioRepository portfolioRepository, ILogger<
         }
     }
 
-    public async Task AddPortfolioAsync(Guid artistId, string title, Guid techniqueId, string? description)
+    public async Task<Guid> AddPortfolioAsync(Guid artistId, string title, Guid techniqueId, string? description)
     {
         try
         {
             logger.LogInformation("[PortfolioService][Add] Adding new portfolio for artist ID: {ArtistId}, Title: {Title}", artistId, title);
-            await portfolioRepository.AddAsync(artistId, title, techniqueId, description);
+            var id = await portfolioRepository.AddAsync(artistId, title, techniqueId, description);
             logger.LogInformation("[PortfolioService][Add] Successfully added new portfolio for artist ID: {ArtistId}, Title: {Title}", artistId, title);
+            return id;
         }
         catch (Exception e)
         {

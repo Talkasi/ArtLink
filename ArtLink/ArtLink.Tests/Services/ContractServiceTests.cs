@@ -85,8 +85,7 @@ public class ContractServiceTests
         var endDate = DateTime.Today.AddDays(7);
         const ContractState status = ContractState.Draft;
 
-        _mockRepo.Setup(r => r.AddAsync(artistId, employerId, description, status, startDate, endDate))
-                 .Returns(Task.CompletedTask);
+        _mockRepo.Setup(r => r.AddAsync(artistId, employerId, description, status, startDate, endDate));
 
         // Act
         await _contractService.AddContractAsync(artistId, employerId, description, status, startDate: startDate, endDate: endDate);

@@ -78,7 +78,7 @@ public class ContractRepository(ArtLinkDbContext context, ILogger<ContractReposi
         }
     }
 
-    public async Task AddAsync(Guid artistId,
+    public async Task<Guid> AddAsync(Guid artistId,
         Guid employerId,
         string projectDescription,
         ContractState status,
@@ -102,6 +102,7 @@ public class ContractRepository(ArtLinkDbContext context, ILogger<ContractReposi
 
             logger.LogInformation("[{Class}][{Method}] Added contract between artist {ArtistId} and employer {EmployerId} with status {Status}.",
                 ClassName, method, artistId, employerId, status);
+            return contract.Id;
         }
         catch (Exception e)
         {

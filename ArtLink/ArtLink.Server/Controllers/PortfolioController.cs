@@ -2,6 +2,9 @@
 using ArtLink.Domain.Interfaces.Services;
 using ArtLink.Dto.Portfolio;
 using System.ComponentModel.DataAnnotations;
+using System.Security.Claims;
+using ArtLink.Domain.Models.Enums;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ArtLink.Server.Controllers;
 
@@ -15,12 +18,21 @@ public class PortfolioController(IPortfolioService portfolioService, ILogger<Por
     /// <param name="dto">Данные для создания портфолио.</param>
     /// <returns>Результат выполнения запроса.</returns>
     [HttpPost]
+    [Authorize(Policy = "ArtistOrAdmin")]
     public async Task<IActionResult> Create([FromBody][Required] CreatePortfolioDto dto)
     {
         logger.LogInformation("[PortfolioController][Create] Creating portfolio for artist: {ArtistId}", dto.ArtistId);
 
         try
         {
+            var currentUserId = Guid.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value!);
+            var currentUserRole = User.FindFirst("Role")?.Value;
+            if (currentUserRole != Roles.RoleNames[(int)RolesEnum.Admin] && currentUserId != dto.ArtistId)
+            {
+                logger.LogWarning("[PortfolioController][Create] Artist {CurrentUserId} tried to create another artist {TargetId}", currentUserId, dto.ArtistId);
+                return Forbid();
+            }
+            
             await portfolioService.AddPortfolioAsync(dto.ArtistId, dto.Title, dto.TechniqueId, dto.Description);
             logger.LogInformation("[PortfolioController][Create] Portfolio created successfully for artist: {ArtistId}", dto.ArtistId);
             return Ok();
@@ -38,6 +50,7 @@ public class PortfolioController(IPortfolioService portfolioService, ILogger<Por
     /// <param name="id">Идентификатор портфолио.</param>
     /// <returns>Информация о портфолио.</returns>
     [HttpGet("{id:guid}")]
+    [AllowAnonymous]
     public async Task<IActionResult> GetById([FromRoute][Required] Guid id)
     {
         logger.LogInformation("[PortfolioController][GetById] Fetching portfolio with ID: {PortfolioId}", id);
@@ -67,6 +80,7 @@ public class PortfolioController(IPortfolioService portfolioService, ILogger<Por
     /// <param name="artistId">Идентификатор художника.</param>
     /// <returns>Список портфолио художника.</returns>
     [HttpGet("artist/{artistId:guid}")]
+    [AllowAnonymous]
     public async Task<IActionResult> GetByArtist([FromRoute][Required] Guid artistId)
     {
         logger.LogInformation("[PortfolioController][GetByArtist] Fetching portfolios for artist: {ArtistId}", artistId);
@@ -92,12 +106,16 @@ public class PortfolioController(IPortfolioService portfolioService, ILogger<Por
     /// <param name="dto">Новые данные портфолио.</param>
     /// <returns>Результат выполнения запроса.</returns>
     [HttpPut("{id:guid}")]
+    [Authorize(Policy = "ArtistOrAdmin")]
     public async Task<IActionResult> Update([FromRoute][Required] Guid id, [FromBody][Required] CreatePortfolioDto dto)
     {
         logger.LogInformation("[PortfolioController][Update] Updating portfolio: {PortfolioId}", id);
 
         try
         {
+            var ownershipCheck = await CheckPortfolioOwnershipAsync(id, "Update");
+            if (ownershipCheck != null) return ownershipCheck;
+            
             await portfolioService.UpdatePortfolioAsync(id, dto.ArtistId, dto.Title, dto.TechniqueId, dto.Description);
             logger.LogInformation("[PortfolioController][Update] Portfolio updated successfully: {PortfolioId}", id);
             return Ok();
@@ -115,12 +133,16 @@ public class PortfolioController(IPortfolioService portfolioService, ILogger<Por
     /// <param name="id">Идентификатор портфолио.</param>
     /// <returns>Результат выполнения запроса.</returns>
     [HttpDelete("{id:guid}")]
+    [Authorize(Policy = "ArtistOrAdmin")]
     public async Task<IActionResult> Delete([FromRoute][Required] Guid id)
     {
         logger.LogInformation("[PortfolioController][Delete] Deleting portfolio: {PortfolioId}", id);
 
         try
         {
+            var ownershipCheck = await CheckPortfolioOwnershipAsync(id, "Delete");
+            if (ownershipCheck != null) return ownershipCheck;
+            
             await portfolioService.DeletePortfolioAsync(id);
             logger.LogInformation("[PortfolioController][Delete] Portfolio deleted successfully: {PortfolioId}", id);
             return Ok();
@@ -130,5 +152,29 @@ public class PortfolioController(IPortfolioService portfolioService, ILogger<Por
             logger.LogError(e, "[PortfolioController][Delete] Error deleting portfolio: {PortfolioId}", id);
             return StatusCode(500);
         }
+    }
+    
+    private async Task<IActionResult?> CheckPortfolioOwnershipAsync(Guid portfolioId, string actionName)
+    {
+        var currentUserId = Guid.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value!);
+        var currentUserRole = User.FindFirst("Role")?.Value;
+
+        var portfolio = await portfolioService.GetPortfolioByIdAsync(portfolioId);
+        if (portfolio == null)
+        {
+            logger.LogWarning("[PortfolioController][{Action}] Portfolio not found: {PortfolioId}", actionName, portfolioId);
+            return NotFound("Portfolio not found.");
+        }
+
+        if (currentUserRole == Roles.RoleNames[(int)RolesEnum.Admin] || portfolio.ArtistId == currentUserId)
+        {
+            return null; // Проверка пройдена
+        }
+
+        logger.LogWarning(
+            "[PortfolioController][{Action}] User {UserId} tried to access someone else's portfolio {PortfolioId}",
+            actionName, currentUserId, portfolioId);
+        return Forbid(); // 403 Forbidden
+
     }
 }

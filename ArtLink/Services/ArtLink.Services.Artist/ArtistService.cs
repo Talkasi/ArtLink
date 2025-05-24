@@ -42,7 +42,7 @@ public class ArtistService(IArtistRepository artistRepository, ILogger<ArtistSer
         }
     }
 
-    public async Task AddArtistAsync(
+    public async Task<Guid> AddArtistAsync(
         string firstName,
         string lastName,
         string email,
@@ -54,7 +54,7 @@ public class ArtistService(IArtistRepository artistRepository, ILogger<ArtistSer
         try
         {
             logger.LogInformation("[ArtistService][Add] Adding new artist: {FirstName} {LastName}", firstName, lastName);
-            await artistRepository.AddAsync(
+            var id = await artistRepository.AddAsync(
                 firstName,
                 lastName,
                 email,
@@ -64,6 +64,7 @@ public class ArtistService(IArtistRepository artistRepository, ILogger<ArtistSer
                 experience
             );
             logger.LogInformation("[ArtistService][Add] Successfully added artist: {FirstName} {LastName}", firstName, lastName);
+            return id;
         }
         catch (Exception e)
         {

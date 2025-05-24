@@ -34,7 +34,7 @@ public interface IArtworkService
     /// <returns>
     /// A task that represents the asynchronous operation.
     /// </returns>
-    Task AddArtworkAsync(Guid portfolioId,
+    Task<Guid> AddArtworkAsync(Guid portfolioId,
         string title,
         string imagePath,
         string? description = null);

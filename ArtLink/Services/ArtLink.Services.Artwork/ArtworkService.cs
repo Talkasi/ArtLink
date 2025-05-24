@@ -42,13 +42,14 @@ public class ArtworkService(IArtworkRepository artworkRepository, ILogger<Artwor
         }
     }
 
-    public async Task AddArtworkAsync(Guid portfolioId, string title, string imagePath, string? description)
+    public async Task<Guid> AddArtworkAsync(Guid portfolioId, string title, string imagePath, string? description)
     {
         try
         {
             logger.LogInformation("[ArtworkService][Add] Adding new artwork to portfolio with ID: {PortfolioId}, Title: {Title}", portfolioId, title);
-            await artworkRepository.AddAsync(portfolioId, title, imagePath, description);
+            var id = await artworkRepository.AddAsync(portfolioId, title, imagePath, description);
             logger.LogInformation("[ArtworkService][Add] Successfully added artwork to portfolio with ID: {PortfolioId}, Title: {Title}", portfolioId, title);
+            return id;
         }
         catch (Exception e)
         {

@@ -45,7 +45,7 @@ public interface IContractRepository
     /// <param name="startDate">The start date of the contract.</param>
     /// <param name="endDate">The end date of the contract.</param>
     /// <returns>A task representing the asynchronous operation.</returns>
-    Task AddAsync(Guid artistId,
+    Task<Guid> AddAsync(Guid artistId,
         Guid employerId,
         string projectDescription,
         ContractState status,

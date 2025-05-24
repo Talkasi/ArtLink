@@ -1,13 +1,16 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Security.Claims;
 using ArtLink.Domain.Interfaces.Services;
+using ArtLink.Domain.Models.Enums;
 using ArtLink.Dto.Artist;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ArtLink.Server.Controllers;
 
 [ApiController]
 [Route("api/artists")]
-public class ArtistController(IArtistService service, ILogger<ArtistController> logger) : ControllerBase
+public class ArtistController(IArtistService service, ILogger<ArtistController> logger, ITokenService tokenService) : ControllerBase
 {
     /// <summary>
     /// Регистрация нового художника.
@@ -15,15 +18,19 @@ public class ArtistController(IArtistService service, ILogger<ArtistController> 
     /// <param name="dto">Данные регистрации художника.</param>
     /// <returns>Результат выполнения запроса.</returns>
     [HttpPost("register")]
+    [AllowAnonymous]
     public async Task<IActionResult> Register([FromBody][Required] RegisterArtistDto dto)
     {
         logger.LogInformation("[ArtistController][Register] Attempting to register artist with email: {Email}", dto.Email);
 
         try
         {
-            await service.AddArtistAsync(dto.FirstName, dto.LastName, dto.Email, dto.PasswordHash, dto.Bio, dto.ProfilePicturePath, dto.Experience);
+            var id = await service.AddArtistAsync(dto.FirstName, dto.LastName, dto.Email, dto.PasswordHash, dto.Bio, dto.ProfilePicturePath, dto.Experience);
             logger.LogInformation("[ArtistController][Register] Successfully registered artist: {Email}", dto.Email);
-            return Ok();
+
+            var token = tokenService.GenerateToken(id, dto.Email, RolesEnum.Artist);
+
+            return Ok(new { Token = token });
         }
         catch (Exception e)
         {
@@ -38,6 +45,7 @@ public class ArtistController(IArtistService service, ILogger<ArtistController> 
     /// <param name="dto">Данные для входа.</param>
     /// <returns>Информация о художнике при успешной авторизации.</returns>
     [HttpPost("login")]
+    [AllowAnonymous]
     public async Task<IActionResult> Login([FromBody][Required] LoginArtistDto dto)
     {
         logger.LogInformation("[ArtistController][Login] Attempting login for artist with email: {Email}", dto.Email);
@@ -50,9 +58,21 @@ public class ArtistController(IArtistService service, ILogger<ArtistController> 
                 logger.LogWarning("[ArtistController][Login] Login failed for artist with email: {Email}", dto.Email);
                 return Unauthorized();
             }
-
+            
+            var token = tokenService.GenerateToken(artist.Id, dto.Email, RolesEnum.Artist);
             logger.LogInformation("[ArtistController][Login] Login successful for artist: {Email}", dto.Email);
-            return Ok(new ArtistDto(artist.Id, artist.FirstName, artist.LastName, artist.Email, artist.Bio, artist.ProfilePicturePath, artist.Experience));
+            return Ok(new 
+            { 
+                Token = token,
+                Artist = new ArtistDto(
+                    artist.Id, 
+                    artist.FirstName, 
+                    artist.LastName, 
+                    artist.Email, 
+                    artist.Bio, 
+                    artist.ProfilePicturePath, 
+                    artist.Experience)
+            });
         }
         catch (Exception e)
         {
@@ -67,6 +87,7 @@ public class ArtistController(IArtistService service, ILogger<ArtistController> 
     /// <param name="id">Идентификатор художника.</param>
     /// <returns>Информация о художнике.</returns>
     [HttpGet("{id:guid}")]
+    [AllowAnonymous]
     public async Task<IActionResult> GetById([FromRoute][Required] Guid id)
     {
         logger.LogInformation("[ArtistController][GetById] Request to get artist with ID: {ArtistId}", id);
@@ -97,12 +118,21 @@ public class ArtistController(IArtistService service, ILogger<ArtistController> 
     /// <param name="dto">Новые данные художника.</param>
     /// <returns>Результат выполнения запроса.</returns>
     [HttpPut("{id:guid}")]
+    [Authorize(Policy = "ArtistOrAdmin")]
     public async Task<IActionResult> Update([FromRoute][Required] Guid id, [FromBody][Required] RegisterArtistDto dto)
     {
         logger.LogInformation("[ArtistController][Update] Attempting to update artist with ID: {ArtistId}", id);
 
         try
         {
+            var currentUserId = Guid.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value!);
+            var currentUserRole = User.FindFirst("Role")?.Value;
+            if (currentUserRole != Roles.RoleNames[(int)RolesEnum.Admin] && currentUserId != id)
+            {
+                logger.LogWarning("[ArtistController][Update] Artist {CurrentUserId} tried to update another artist {TargetId}", currentUserId, id);
+                return Forbid();
+            }
+            
             await service.UpdateArtistAsync(id, dto.FirstName, dto.LastName, dto.Email, dto.Bio, dto.ProfilePicturePath, dto.Experience);
             logger.LogInformation("[ArtistController][Update] Successfully updated artist with ID: {ArtistId}", id);
             return Ok();
@@ -120,12 +150,21 @@ public class ArtistController(IArtistService service, ILogger<ArtistController> 
     /// <param name="id">Идентификатор художника.</param>
     /// <returns>Результат выполнения запроса.</returns>
     [HttpDelete("{id:guid}")]
+    [Authorize(Policy = "ArtistOrAdmin")]
     public async Task<IActionResult> Delete([FromRoute][Required] Guid id)
     {
         logger.LogInformation("[ArtistController][Delete] Attempting to delete artist with ID: {ArtistId}", id);
 
         try
         {
+            var currentUserId = Guid.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value!);
+            var currentUserRole = User.FindFirst("Role")?.Value;
+            if (currentUserRole != Roles.RoleNames[(int)RolesEnum.Admin] && currentUserId != id)
+            {
+                logger.LogWarning("[ArtistController][Delete] Artist {CurrentUserId} tried to delete another artist {TargetId}", currentUserId, id);
+                return Forbid();
+            }
+            
             await service.DeleteArtistAsync(id);
             logger.LogInformation("[ArtistController][Delete] Successfully deleted artist with ID: {ArtistId}", id);
             return Ok();

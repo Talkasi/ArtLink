@@ -32,7 +32,7 @@ public interface IPortfolioRepository
     /// <param name="techniqueId">The unique identifier of the technique used in the portfolio.</param>
     /// <param name="description">A description of the portfolio.</param>
     /// <returns>A task representing the asynchronous operation.</returns>
-    Task AddAsync(Guid artistId,
+    Task<Guid> AddAsync(Guid artistId,
         string title,
         Guid techniqueId,
         string? description = null);

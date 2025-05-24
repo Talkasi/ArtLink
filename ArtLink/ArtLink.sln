@@ -24,6 +24,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArtLink.Server", "ArtLink.S
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArtLink.Services.Technique", "Services\ArtLink.Services.Technique\ArtLink.Services.Technique.csproj", "{8757C1D3-1A90-4F7A-9D29-13AE0EB46BE6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArtLink.Services.Token", "Services\ArtLink.Services.Token\ArtLink.Services.Token.csproj", "{0A8AF494-1CD3-49D1-B3D7-97EA8477DBDF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -78,5 +80,9 @@ Global
 		{8757C1D3-1A90-4F7A-9D29-13AE0EB46BE6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8757C1D3-1A90-4F7A-9D29-13AE0EB46BE6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8757C1D3-1A90-4F7A-9D29-13AE0EB46BE6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0A8AF494-1CD3-49D1-B3D7-97EA8477DBDF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0A8AF494-1CD3-49D1-B3D7-97EA8477DBDF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0A8AF494-1CD3-49D1-B3D7-97EA8477DBDF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0A8AF494-1CD3-49D1-B3D7-97EA8477DBDF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
