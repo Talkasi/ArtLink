@@ -1,7 +1,16 @@
 import React, { useState } from 'react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import { TextField, Button, Box, Typography, CircularProgress } from '@mui/material';
+import { 
+  TextField, 
+  Button, 
+  Box, 
+  Typography, 
+  CircularProgress,
+  InputAdornment,
+  IconButton
+} from '@mui/material';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { LoginData, UserType } from '../../types/authTypes.tsx';
 import { authApi } from '../../api/authApi.tsx';
 
@@ -13,6 +22,15 @@ interface LoginFormProps {
 const LoginForm: React.FC<LoginFormProps> = ({ userType, onSuccess }) => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+
+  const handleClickShowPassword = () => {
+    setShowPassword(!showPassword);
+  };
+
+  const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+  };
 
   const formik = useFormik({
     initialValues: {
@@ -56,12 +74,26 @@ const LoginForm: React.FC<LoginFormProps> = ({ userType, onSuccess }) => {
         id="password"
         name="password"
         label="Пароль"
-        type="password"
+        type={showPassword ? 'text' : 'password'}
         value={formik.values.password}
         onChange={formik.handleChange}
         error={formik.touched.password && Boolean(formik.errors.password)}
         helperText={formik.touched.password && formik.errors.password}
         sx={{ mb: 2 }}
+        InputProps={{
+          endAdornment: (
+            <InputAdornment position="end">
+              <IconButton
+                aria-label="toggle password visibility"
+                onClick={handleClickShowPassword}
+                onMouseDown={handleMouseDownPassword}
+                edge="end"
+              >
+                {showPassword ? <VisibilityOff /> : <Visibility />}
+              </IconButton>
+            </InputAdornment>
+          ),
+        }}
       />
       {error && (
         <Typography color="error" sx={{ mb: 2 }}>

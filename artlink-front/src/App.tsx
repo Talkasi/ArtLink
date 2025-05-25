@@ -2,6 +2,8 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { CssBaseline, ThemeProvider, createTheme } from '@mui/material';
 import LoginPage from './pages/LoginPage.tsx';
+import RegisterPage from './pages/RegisterPage.tsx';
+import ArtistDashboardPage from './pages/ArtistDashboardPage.tsx';
 
 const theme = createTheme({
   palette: {
@@ -21,6 +23,8 @@ const App: React.FC = () => {
       <Router>
         <Routes>
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
+          <Route path="/artist" element={<ArtistDashboardPage />} />
         </Routes>
       </Router>
     </ThemeProvider>

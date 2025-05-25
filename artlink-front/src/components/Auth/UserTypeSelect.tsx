@@ -15,14 +15,14 @@ export const UserTypeSelect: React.FC<UserTypeSelectProps> = ({ userType, onSele
       </Typography>
       <ButtonGroup variant="contained">
         <Button
-          color={userType === 'Artist' ? 'primary' : 'inherit'}
-          onClick={() => onSelect('Artist')}
+          color={userType === 'artist' ? 'primary' : 'inherit'}
+          onClick={() => onSelect('artist')}
         >
           Художник
         </Button>
         <Button
-          color={userType === 'Employer' ? 'primary' : 'inherit'}
-          onClick={() => onSelect('Employer')}
+          color={userType === 'employer' ? 'primary' : 'inherit'}
+          onClick={() => onSelect('employer')}
         >
           Работодатель
         </Button>
