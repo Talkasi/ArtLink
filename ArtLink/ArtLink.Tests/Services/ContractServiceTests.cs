@@ -1,9 +1,9 @@
-﻿using Moq;
+﻿using ArtLink.Domain.Interfaces.Repositories;
 using ArtLink.Domain.Models;
-using ArtLink.Domain.Interfaces.Repositories;
 using ArtLink.Domain.Models.Enums;
 using ArtLink.Services.Contract;
 using Microsoft.Extensions.Logging;
+using Moq;
 
 namespace ArtLink.Tests.Services;
 
@@ -85,8 +85,7 @@ public class ContractServiceTests
         var endDate = DateTime.Today.AddDays(7);
         const ContractState status = ContractState.Draft;
 
-        _mockRepo.Setup(r => r.AddAsync(artistId, employerId, description, status, startDate, endDate))
-                 .Returns(Task.CompletedTask);
+        _mockRepo.Setup(r => r.AddAsync(artistId, employerId, description, status, startDate, endDate));
 
         // Act
         await _contractService.AddContractAsync(artistId, employerId, description, status, startDate: startDate, endDate: endDate);

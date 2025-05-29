@@ -56,7 +56,7 @@ public class PortfolioRepository(ArtLinkDbContext context, ILogger<PortfolioRepo
         }
     }
 
-    public async Task AddAsync(Guid artistId,
+    public async Task<Guid> AddAsync(Guid artistId,
         string title,
         Guid techniqueId,
         string? description)
@@ -69,6 +69,8 @@ public class PortfolioRepository(ArtLinkDbContext context, ILogger<PortfolioRepo
             await context.SaveChangesAsync();
 
             logger.LogInformation("[{Class}][{Method}] Added portfolio '{Title}' for artist ID {ArtistId}.", ClassName, method, title, artistId);
+
+            return portfolio.Id;
         }
         catch (Exception e)
         {

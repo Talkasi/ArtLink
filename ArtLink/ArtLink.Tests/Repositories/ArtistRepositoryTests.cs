@@ -1,6 +1,6 @@
-using Microsoft.EntityFrameworkCore;
 using ArtLink.DataAccess.Context;
 using ArtLink.DataAccess.Repositories;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging.Abstractions;
 
 namespace ArtLink.Tests.Repositories

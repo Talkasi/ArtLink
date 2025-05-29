@@ -1,6 +1,6 @@
-﻿using ArtLink.Services.Portfolio;
-using ArtLink.Domain.Interfaces.Repositories;
+﻿using ArtLink.Domain.Interfaces.Repositories;
 using ArtLink.Domain.Models;
+using ArtLink.Services.Portfolio;
 using Microsoft.Extensions.Logging;
 using Moq;
 

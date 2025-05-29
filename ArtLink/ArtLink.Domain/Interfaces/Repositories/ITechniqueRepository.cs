@@ -22,7 +22,7 @@ public interface ITechniqueRepository
     /// <param name="name">The name of the technique.</param>
     /// <param name="description">The description of the technique.</param>
     /// <returns>A task representing the asynchronous operation.</returns>
-    Task AddAsync(string name, string description);
+    Task<Guid> AddAsync(string name, string description);
 
     /// <summary>
     /// Asynchronously updates an existing technique.

@@ -32,7 +32,7 @@ public interface IArtworkRepository
     /// <param name="imagePath">The file path or URL of the artwork's image.</param>
     /// <param name="description">A description of the artwork.</param>
     /// <returns>A task representing the asynchronous operation.</returns>
-    Task AddAsync(Guid portfolioId,
+    Task<Guid> AddAsync(Guid portfolioId,
         string title,
         string imagePath,
         string? description = null);

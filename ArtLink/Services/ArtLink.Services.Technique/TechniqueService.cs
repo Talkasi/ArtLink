@@ -1,7 +1,7 @@
 ﻿using ArtLink.Domain.Interfaces.Repositories;
 using ArtLink.Domain.Interfaces.Services;
-using TechniqueModel = ArtLink.Domain.Models.Technique;
 using Microsoft.Extensions.Logging;
+using TechniqueModel = ArtLink.Domain.Models.Technique;
 
 namespace ArtLink.Services.Technique;
 
@@ -23,13 +23,14 @@ public class TechniqueService(ITechniqueRepository techniqueRepository, ILogger<
         }
     }
 
-    public async Task AddTechniqueAsync(string name, string description)
+    public async Task<Guid> AddTechniqueAsync(string name, string description)
     {
         try
         {
             logger.LogInformation("[TechniqueService][AddTechniqueAsync] Adding new technique: {Name}", name);
-            await techniqueRepository.AddAsync(name, description);
+            var id = await techniqueRepository.AddAsync(name, description);
             logger.LogInformation("[TechniqueService][AddTechniqueAsync] Successfully added technique: {Name}", name);
+            return id;
         }
         catch (Exception e)
         {

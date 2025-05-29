@@ -1,7 +1,7 @@
-using EmployerModel = ArtLink.Domain.Models.Employer;
-using ArtLink.Domain.Interfaces.Services;
 using ArtLink.Domain.Interfaces.Repositories;
+using ArtLink.Domain.Interfaces.Services;
 using Microsoft.Extensions.Logging;
+using EmployerModel = ArtLink.Domain.Models.Employer;
 
 namespace ArtLink.Services.Employer;
 
@@ -42,7 +42,7 @@ public class EmployerService(IEmployerRepository employerRepository, ILogger<Emp
         }
     }
 
-    public async Task AddEmployerAsync(
+    public async Task<Guid> AddEmployerAsync(
         string companyName,
         string email,
         string passwordHash,
@@ -52,8 +52,9 @@ public class EmployerService(IEmployerRepository employerRepository, ILogger<Emp
         try
         {
             logger.LogInformation("[EmployerService][Add] Adding new employer: {CompanyName}", companyName);
-            await employerRepository.AddAsync(companyName, email, passwordHash, cpFirstName, cpLastName);
+            var id = await employerRepository.AddAsync(companyName, email, passwordHash, cpFirstName, cpLastName);
             logger.LogInformation("[EmployerService][Add] Successfully added employer: {CompanyName}", companyName);
+            return id;
         }
         catch (Exception e)
         {

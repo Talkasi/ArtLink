@@ -53,7 +53,7 @@ public class ArtworkRepository(ArtLinkDbContext context, ILogger<ArtworkReposito
         }
     }
 
-    public async Task AddAsync(Guid portfolioId,
+    public async Task<Guid> AddAsync(Guid portfolioId,
         string title,
         string imagePath,
         string? description)
@@ -66,6 +66,7 @@ public class ArtworkRepository(ArtLinkDbContext context, ILogger<ArtworkReposito
             await context.SaveChangesAsync();
 
             logger.LogInformation("[{Class}][{Method}] Added new artwork '{Title}' to portfolio {PortfolioId}.", ClassName, method, title, portfolioId);
+            return artworkDb.Id;
         }
         catch (Exception e)
         {

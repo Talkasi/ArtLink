@@ -13,6 +13,6 @@ public class LoginEmployerDto(
     public string Email { get; set; } = email;
 
     [Required]
-    [JsonPropertyName("passwordHash")]
+    [JsonPropertyName("password_hash")]
     public string PasswordHash { get; set; } = passwordHash;
 }

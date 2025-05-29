@@ -3,6 +3,7 @@ using ArtLink.Domain.Interfaces.Services;
 using ArtLink.Dto.Artist;
 using ArtLink.Dto.ArtWork;
 using ArtLink.Dto.Employer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ArtLink.Server.Controllers;
@@ -17,6 +18,7 @@ public class SearchController(ISearchService service, ILogger<SearchController> 
     /// <param name="prompt">Строка поиска (имя, фамилия, email).</param>
     /// <returns>Список найденных художников.</returns>
     [HttpGet("artists")]
+    [AllowAnonymous]
     public async Task<IActionResult> SearchArtists([FromQuery][Required] string prompt)
     {
         logger.LogInformation("[SearchController][SearchArtists] Searching artists with prompt: {Prompt}", prompt);
@@ -41,6 +43,7 @@ public class SearchController(ISearchService service, ILogger<SearchController> 
     /// <param name="prompt">Строка поиска (название компании, имя контактного лица и т.п.).</param>
     /// <returns>Список найденных работодателей.</returns>
     [HttpGet("employers")]
+    [AllowAnonymous]
     public async Task<IActionResult> SearchEmployers([FromQuery][Required] string prompt)
     {
         logger.LogInformation("[SearchController][SearchEmployers] Searching employers with prompt: {Prompt}", prompt);
@@ -65,6 +68,7 @@ public class SearchController(ISearchService service, ILogger<SearchController> 
     /// <param name="prompt">Строка поиска (название или описание работы).</param>
     /// <returns>Список найденных работ.</returns>
     [HttpGet("artworks")]
+    [AllowAnonymous]
     public async Task<IActionResult> SearchArtworks([FromQuery][Required] string prompt)
     {
         logger.LogInformation("[SearchController][SearchArtworks] Searching artworks with prompt: {Prompt}", prompt);

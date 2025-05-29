@@ -31,7 +31,7 @@ public class TechniqueRepository(ArtLinkDbContext context, ILogger<TechniqueRepo
         }
     }
 
-    public async Task AddAsync(string name, string description)
+    public async Task<Guid> AddAsync(string name, string description)
     {
         const string method = nameof(AddAsync);
         try
@@ -41,6 +41,8 @@ public class TechniqueRepository(ArtLinkDbContext context, ILogger<TechniqueRepo
             await context.SaveChangesAsync();
 
             logger.LogInformation("[{Class}][{Method}] Added technique '{Name}'.", ClassName, method, name);
+
+            return technique.Id;
         }
         catch (Exception e)
         {

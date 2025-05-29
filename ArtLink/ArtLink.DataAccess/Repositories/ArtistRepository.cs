@@ -55,7 +55,7 @@ public class ArtistRepository(ArtLinkDbContext context, ILogger<ArtistRepository
         }
     }
 
-    public async Task AddAsync(string firstName,
+    public async Task<Guid> AddAsync(string firstName,
         string lastName,
         string email,
         string passwordHash,
@@ -80,6 +80,7 @@ public class ArtistRepository(ArtLinkDbContext context, ILogger<ArtistRepository
             await context.SaveChangesAsync();
 
             logger.LogInformation("[{Class}][{Method}] Added new artist: {Email}", ClassName, method, email);
+            return artistDb.Id;
         }
         catch (Exception e)
         {

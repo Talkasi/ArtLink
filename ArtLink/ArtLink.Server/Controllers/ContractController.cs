@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using ArtLink.Domain.Interfaces.Services;
 using ArtLink.Dto.Contract;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ArtLink.Server.Controllers;
@@ -15,6 +16,7 @@ public class ContractController(IContractService service, ILogger<ContractContro
     /// <param name="dto">Данные нового контракта.</param>
     /// <returns>Результат выполнения запроса.</returns>
     [HttpPost]
+    [Authorize(Policy = "AuthorizedOnly")]
     public async Task<IActionResult> Create([FromBody][Required] CreateContractDto dto)
     {
         logger.LogInformation("[ContractController][Create] Creating contract between Employer {EmployerId} and Artist {ArtistId}", dto.EmployerId, dto.ArtistId);
@@ -38,6 +40,7 @@ public class ContractController(IContractService service, ILogger<ContractContro
     /// <param name="id">Идентификатор контракта.</param>
     /// <returns>Информация о контракте.</returns>
     [HttpGet("{id:guid}")]
+    [Authorize(Policy = "AuthorizedOnly")]
     public async Task<IActionResult> GetById([FromRoute][Required] Guid id)
     {
         logger.LogInformation("[ContractController][GetById] Retrieving contract with ID: {ContractId}", id);
@@ -68,6 +71,7 @@ public class ContractController(IContractService service, ILogger<ContractContro
     /// <param name="dto">Новые данные контракта.</param>
     /// <returns>Результат выполнения запроса.</returns>
     [HttpPut("{id:guid}")]
+    [Authorize(Policy = "AuthorizedOnly")]
     public async Task<IActionResult> Update([FromRoute][Required] Guid id, [FromBody][Required] CreateContractDto dto)
     {
         logger.LogInformation("[ContractController][Update] Updating contract: {ContractId}", id);
@@ -91,6 +95,7 @@ public class ContractController(IContractService service, ILogger<ContractContro
     /// <param name="id">Идентификатор контракта.</param>
     /// <returns>Результат выполнения запроса.</returns>
     [HttpDelete("{id:guid}")]
+    [Authorize(Policy = "AuthorizedOnly")]
     public async Task<IActionResult> Delete([FromRoute][Required] Guid id)
     {
         logger.LogInformation("[ContractController][Delete] Deleting contract: {ContractId}", id);

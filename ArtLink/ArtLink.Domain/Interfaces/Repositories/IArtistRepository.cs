@@ -34,7 +34,7 @@ public interface IArtistRepository
     /// <param name="profilePicturePath">The file path or URL of the artist's profile picture (optional).</param>
     /// <param name="experience">The number of years of experience the artist has (optional).</param>
     /// <returns>A task that represents the asynchronous operation.</returns>
-    Task AddAsync(
+    Task<Guid> AddAsync(
         string firstName,
         string lastName,
         string email,
