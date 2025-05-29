@@ -12,8 +12,8 @@ import {
   Divider
 } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
-import { UserType } from '../../types/authTypes.tsx';
-import { authApi } from '../../api/authApi.tsx';
+import { UserType } from '../../types/types.tsx';
+import { authApi } from '../../api/api.tsx';
 
 interface RegisterFormProps {
   userType: UserType;
@@ -24,21 +24,34 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ userType, onSuccess }) => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const handleClickShowPassword = () => {
     setShowPassword(!showPassword);
+  };
+
+  const handleClickShowConfirmPassword = () => {
+    setShowConfirmPassword(!showConfirmPassword);
   };
 
   const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
   };
 
+  // Общая схема валидации для паролей
+  const passwordValidation = Yup.string()
+    .min(6, 'Минимум 6 символов')
+    .required('Обязательное поле');
+
   // Схема валидации для художника
   const artistValidationSchema = Yup.object().shape({
     first_name: Yup.string().required('Обязательное поле'),
     last_name: Yup.string().required('Обязательное поле'),
     email: Yup.string().email('Некорректный email').required('Обязательное поле'),
-    password: Yup.string().min(6, 'Минимум 6 символов').required('Обязательное поле'),
+    password: passwordValidation,
+    password_confirmation: Yup.string()
+      .oneOf([Yup.ref('password')], 'Пароли должны совпадать')
+      .required('Подтвердите пароль'),
     bio: Yup.string(),
     experience: Yup.number().min(0, 'Не может быть отрицательным'),
   });
@@ -49,7 +62,10 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ userType, onSuccess }) => {
     cp_first_name: Yup.string().required('Обязательное поле'),
     cp_last_name: Yup.string().required('Обязательное поле'),
     email: Yup.string().email('Некорректный email').required('Обязательное поле'),
-    password: Yup.string().min(6, 'Минимум 6 символов').required('Обязательное поле'),
+    password: passwordValidation,
+    password_confirmation: Yup.string()
+      .oneOf([Yup.ref('password')], 'Пароли должны совпадать')
+      .required('Подтвердите пароль'),
   });
 
   const validationSchema = userType === 'artist' ? artistValidationSchema : employerValidationSchema;
@@ -61,14 +77,16 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ userType, onSuccess }) => {
       last_name: '',
       email: '',
       password: '',
-      bio: '',
-      profile_picture_path: '',
-      experience: 0,
+      password_confirmation: '',
+      bio: null,
+      profile_picture: null,
+      experience: null,
     } : {
       userType: 'employer',
       company_name: '',
       email: '',
       password: '',
+      password_confirmation: '',
       cp_first_name: '',
       cp_last_name: '',
     },
@@ -84,9 +102,9 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ userType, onSuccess }) => {
             last_name: values.last_name!,
             email: values.email,
             password: values.password,
-            bio: values.bio || '',
-            profile_picture_path: values.profile_picture_path || '',
-            experience: values.experience || 0,
+            bio: values.bio || null,
+            profile_picture: values.profile_picture || null,
+            experience: values.experience || null,
           });
         } else {
           await authApi.registerEmployer({
@@ -232,6 +250,32 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ userType, onSuccess }) => {
                 edge="end"
               >
                 {showPassword ? <VisibilityOff /> : <Visibility />}
+              </IconButton>
+            </InputAdornment>
+          ),
+        }}
+      />
+      <TextField
+        fullWidth
+        id="password_confirmation"
+        name="password_confirmation"
+        label="Подтверждение пароля"
+        type={showConfirmPassword ? 'text' : 'password'}
+        value={formik.values.password_confirmation}
+        onChange={formik.handleChange}
+        error={formik.touched.password_confirmation && Boolean(formik.errors.password_confirmation)}
+        helperText={formik.touched.password_confirmation && formik.errors.password_confirmation}
+        sx={{ mb: 2 }}
+        InputProps={{
+          endAdornment: (
+            <InputAdornment position="end">
+              <IconButton
+                aria-label="toggle password visibility"
+                onClick={handleClickShowConfirmPassword}
+                onMouseDown={handleMouseDownPassword}
+                edge="end"
+              >
+                {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
               </IconButton>
             </InputAdornment>
           ),

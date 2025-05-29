@@ -1,10 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using ArtLink.Domain.Interfaces.Services;
-using ArtLink.Dto.Employer;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
+using ArtLink.Domain.Interfaces.Services;
 using ArtLink.Domain.Models.Enums;
+using ArtLink.Dto.Employer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace ArtLink.Server.Controllers;
 
@@ -115,8 +115,9 @@ public class EmployerController(IEmployerService employerService, ILogger<Employ
     /// <param name="dto">Новые данные работодателя.</param>
     /// <returns>Результат выполнения запроса.</returns>
     [HttpPut("{id:guid}")]
-    [Authorize(Policy = "EmployerOrAdmin")]
-    public async Task<IActionResult> Update([FromRoute][Required] Guid id, [FromBody][Required] RegisterEmployerDto dto)
+    [Authorize(Policy = "Employer")]
+    public async Task<IActionResult> Update([FromRoute] [Required] Guid id,
+        [FromBody] [Required] EmployerDto dto)
     {
         logger.LogInformation("[EmployerController][Update] Updating employer: {EmployerId}", id);
 
@@ -124,12 +125,13 @@ public class EmployerController(IEmployerService employerService, ILogger<Employ
         {
             var currentUserId = Guid.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value!);
             var currentUserRole = User.FindFirst("Role")?.Value;
+
             if (currentUserRole != Roles.RoleNames[(int)RolesEnum.Admin] && currentUserId != id)
             {
                 logger.LogWarning("[EmployerController][Update] Employer {CurrentUserId} tried to update another employer {TargetId}", currentUserId, id);
                 return Forbid();
             }
-            
+
             await employerService.UpdateEmployerAsync(id, dto.CompanyName, dto.Email, dto.CpFirstName, dto.CpLastName);
             logger.LogInformation("[EmployerController][Update] Successfully updated employer: {EmployerId}", id);
             return Ok();
@@ -147,7 +149,7 @@ public class EmployerController(IEmployerService employerService, ILogger<Employ
     /// <param name="id">Идентификатор работодателя.</param>
     /// <returns>Результат выполнения запроса.</returns>
     [HttpDelete("{id:guid}")]
-    [Authorize(Policy = "EmployerOrAdmin")]
+    [Authorize(Policy = "Employer")]
     public async Task<IActionResult> Delete([FromRoute][Required] Guid id)
     {
         logger.LogInformation("[EmployerController][Delete] Deleting employer: {EmployerId}", id);

@@ -1,7 +1,7 @@
 ﻿using ArtLink.Domain.Interfaces.Repositories;
 using ArtLink.Domain.Interfaces.Services;
-using TechniqueModel = ArtLink.Domain.Models.Technique;
 using Microsoft.Extensions.Logging;
+using TechniqueModel = ArtLink.Domain.Models.Technique;
 
 namespace ArtLink.Services.Technique;
 

@@ -66,6 +66,6 @@ if not exist "%OUTPUT_DIR%\logs" mkdir "%OUTPUT_DIR%\logs"
 echo Creating run script...
 echo @echo off > "%OUTPUT_DIR%\run.bat"
 echo set COMPONENTS_PATH=%~dp0components >> "%OUTPUT_DIR%\run.bat"
-echo ArtLink.Server.exe --urls "http://0.0.0.0:5258" >> "%OUTPUT_DIR%\run.bat"
+echo ArtLink.Server.exe >> "%OUTPUT_DIR%\run.bat"
 
 endlocal

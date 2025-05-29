@@ -11,8 +11,8 @@ import {
   IconButton
 } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
-import { LoginData, UserType } from '../../types/authTypes.tsx';
-import { authApi } from '../../api/authApi.tsx';
+import { LoginData, UserType } from '../../types/types.tsx';
+import { authApi } from '../../api/api.tsx';
 
 interface LoginFormProps {
   userType: UserType;

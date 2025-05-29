@@ -10,7 +10,7 @@ namespace ArtLink.Server.Controllers;
 
 [ApiController]
 [Route("api/artists")]
-public class ArtistController(IArtistService service, ILogger<ArtistController> logger, ITokenService tokenService) : ControllerBase
+public class ArtistController(IArtistService service, ILogger<ArtistController> logger, ITokenService tokenService, IFileStorageService fileStorageService) : ControllerBase
 {
     /// <summary>
     /// Регистрация нового художника.
@@ -116,10 +116,46 @@ public class ArtistController(IArtistService service, ILogger<ArtistController> 
     /// </summary>
     /// <param name="id">Идентификатор художника.</param>
     /// <param name="dto">Новые данные художника.</param>
+    /// <param name="profilePicture">Новая фотография художника.</param>
     /// <returns>Результат выполнения запроса.</returns>
     [HttpPut("{id:guid}")]
-    [Authorize(Policy = "ArtistOrAdmin")]
-    public async Task<IActionResult> Update([FromRoute][Required] Guid id, [FromBody][Required] RegisterArtistDto dto)
+    [Authorize(Policy = "Artist")]
+    public async Task<IActionResult> Update(
+        [FromRoute] Guid id,
+        [FromForm] ArtistUpdateRequest dto,
+        [FromForm] IFormFile? profilePicture)
+    {
+        try
+        {
+            var currentUserId = Guid.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value!);
+            if (!User.IsInRole(RolesEnum.Admin.ToString()) && currentUserId != id)
+                return Forbid();
+
+            string? newImagePath = null;
+            if (profilePicture != null)
+                newImagePath = await fileStorageService.SaveImageAsync(profilePicture, "artists");
+
+            await service.UpdateArtistAsync(
+                id,
+                dto.FirstName,
+                dto.LastName,
+                dto.Email,
+                dto.Bio,
+                newImagePath,
+                dto.Experience);
+
+            return Ok();
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Error updating artist");
+            return StatusCode(500, ex.Message);
+        }
+    }
+    
+    /*[HttpPut("{id:guid}")]
+    [Authorize(Policy = "Artist")]
+    public async Task<IActionResult> Update([FromRoute][Required] Guid id, [FromBody][Required] ArtistDto dto)
     {
         logger.LogInformation("[ArtistController][Update] Attempting to update artist with ID: {ArtistId}", id);
 
@@ -142,15 +178,16 @@ public class ArtistController(IArtistService service, ILogger<ArtistController> 
             logger.LogError(e, "[ArtistController][Update] Error updating artist: {ArtistId}", id);
             return StatusCode(500);
         }
-    }
+    }*/
 
+    
     /// <summary>
     /// Удалить аккаунт художника.
     /// </summary>
     /// <param name="id">Идентификатор художника.</param>
     /// <returns>Результат выполнения запроса.</returns>
     [HttpDelete("{id:guid}")]
-    [Authorize(Policy = "ArtistOrAdmin")]
+    [Authorize(Policy = "Artist")]
     public async Task<IActionResult> Delete([FromRoute][Required] Guid id)
     {
         logger.LogInformation("[ArtistController][Delete] Attempting to delete artist with ID: {ArtistId}", id);

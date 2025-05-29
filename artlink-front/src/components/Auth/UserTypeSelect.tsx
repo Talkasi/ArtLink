@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button, ButtonGroup, Typography } from '@mui/material';
-import { UserType } from '../../types/authTypes.tsx';
+import { UserType } from '../../types/types.tsx';
 
 interface UserTypeSelectProps {
   userType: UserType | null;

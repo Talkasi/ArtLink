@@ -1,10 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using ArtLink.Domain.Interfaces.Services;
-using ArtLink.Dto.Portfolio;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
+using ArtLink.Domain.Interfaces.Services;
 using ArtLink.Domain.Models.Enums;
+using ArtLink.Dto.Portfolio;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace ArtLink.Server.Controllers;
 
@@ -18,7 +18,7 @@ public class PortfolioController(IPortfolioService portfolioService, ILogger<Por
     /// <param name="dto">Данные для создания портфолио.</param>
     /// <returns>Результат выполнения запроса.</returns>
     [HttpPost]
-    [Authorize(Policy = "ArtistOrAdmin")]
+    [Authorize(Policy = "Artist")]
     public async Task<IActionResult> Create([FromBody][Required] CreatePortfolioDto dto)
     {
         logger.LogInformation("[PortfolioController][Create] Creating portfolio for artist: {ArtistId}", dto.ArtistId);
@@ -106,7 +106,7 @@ public class PortfolioController(IPortfolioService portfolioService, ILogger<Por
     /// <param name="dto">Новые данные портфолио.</param>
     /// <returns>Результат выполнения запроса.</returns>
     [HttpPut("{id:guid}")]
-    [Authorize(Policy = "ArtistOrAdmin")]
+    [Authorize(Policy = "Artist")]
     public async Task<IActionResult> Update([FromRoute][Required] Guid id, [FromBody][Required] CreatePortfolioDto dto)
     {
         logger.LogInformation("[PortfolioController][Update] Updating portfolio: {PortfolioId}", id);
@@ -133,7 +133,7 @@ public class PortfolioController(IPortfolioService portfolioService, ILogger<Por
     /// <param name="id">Идентификатор портфолио.</param>
     /// <returns>Результат выполнения запроса.</returns>
     [HttpDelete("{id:guid}")]
-    [Authorize(Policy = "ArtistOrAdmin")]
+    [Authorize(Policy = "Artist")]
     public async Task<IActionResult> Delete([FromRoute][Required] Guid id)
     {
         logger.LogInformation("[PortfolioController][Delete] Deleting portfolio: {PortfolioId}", id);

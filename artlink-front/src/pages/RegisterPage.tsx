@@ -3,7 +3,7 @@ import { Container, Paper, Typography, Link } from '@mui/material';
 import { Link as RouterLink } from 'react-router-dom';
 import { UserTypeSelect } from '../components/Auth/UserTypeSelect.tsx';
 import RegisterForm from '../components/Auth/RegisterForm.tsx';
-import { UserType } from '../types/authTypes.tsx';
+import { UserType } from '../types/types.tsx';
 
 const RegisterPage: React.FC = () => {
   const [userType, setUserType] = useState<UserType | null>(null);

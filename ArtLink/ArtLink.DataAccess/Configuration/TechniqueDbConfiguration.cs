@@ -1,6 +1,6 @@
+using ArtLink.DataAccess.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using ArtLink.DataAccess.Models;
 
 namespace ArtLink.DataAccess.Configuration;
 

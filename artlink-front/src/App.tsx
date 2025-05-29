@@ -4,6 +4,7 @@ import { CssBaseline, ThemeProvider, createTheme } from '@mui/material';
 import LoginPage from './pages/LoginPage.tsx';
 import RegisterPage from './pages/RegisterPage.tsx';
 import ArtistDashboardPage from './pages/ArtistDashboardPage.tsx';
+import EmployerDashboardPage from './pages/EmployerDashboardPage.tsx';
 
 const theme = createTheme({
   palette: {
@@ -25,6 +26,7 @@ const App: React.FC = () => {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/artist" element={<ArtistDashboardPage />} />
+          <Route path="/employer" element={<EmployerDashboardPage />} />
         </Routes>
       </Router>
     </ThemeProvider>

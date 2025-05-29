@@ -38,3 +38,12 @@ public class ArtistDto(
     [JsonPropertyName("experience")]
     public int? Experience { get; set; } = experience;
 }
+
+public class ArtistUpdateRequest
+{
+    public string FirstName { get; set; }
+    public string LastName { get; set; }
+    public string Email { get; set; }
+    public string? Bio { get; set; }
+    public int? Experience { get; set; }
+}

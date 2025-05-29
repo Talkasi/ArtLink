@@ -1,9 +1,9 @@
-﻿using Moq;
+﻿using ArtLink.Domain.Interfaces.Repositories;
 using ArtLink.Domain.Models;
-using ArtLink.Domain.Interfaces.Repositories;
 using ArtLink.Domain.Models.Enums;
 using ArtLink.Services.Contract;
 using Microsoft.Extensions.Logging;
+using Moq;
 
 namespace ArtLink.Tests.Services;
 

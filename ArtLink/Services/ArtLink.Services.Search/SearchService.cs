@@ -1,6 +1,6 @@
-using ArtLink.Domain.Models;
-using ArtLink.Domain.Interfaces.Services;
 using ArtLink.Domain.Interfaces.Repositories;
+using ArtLink.Domain.Interfaces.Services;
+using ArtLink.Domain.Models;
 using Microsoft.Extensions.Logging;
 
 namespace ArtLink.Services.Search;

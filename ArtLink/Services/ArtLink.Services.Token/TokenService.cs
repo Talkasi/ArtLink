@@ -2,24 +2,18 @@
 using System.Security.Claims;
 using System.Text;
 using ArtLink.Domain.Interfaces.Services;
-using ArtLink.Domain.Models;
 using ArtLink.Domain.Models.Enums;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
-public class TokenService : ITokenService
+namespace ArtLink.Services.Token;
+
+public class TokenService(IConfiguration configuration) : ITokenService
 {
-    private readonly IConfiguration _configuration;
-
-    public TokenService(IConfiguration configuration)
-    {
-        _configuration = configuration;
-    }
-
     public string GenerateToken(Guid id, string email, RolesEnum role)
     {
-        var jwtSettings = _configuration.GetSection("Jwt");
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["Key"]));
+        var jwtSettings = configuration.GetSection("Jwt");
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["Key"] ?? string.Empty));
         var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
         var claims = new[]

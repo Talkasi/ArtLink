@@ -1,8 +1,8 @@
-using ContractModel = ArtLink.Domain.Models.Contract;
-using ArtLink.Domain.Interfaces.Services;
 using ArtLink.Domain.Interfaces.Repositories;
+using ArtLink.Domain.Interfaces.Services;
 using ArtLink.Domain.Models.Enums;
 using Microsoft.Extensions.Logging;
+using ContractModel = ArtLink.Domain.Models.Contract;
 
 namespace ArtLink.Services.Contract;
 

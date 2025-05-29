@@ -1,7 +1,7 @@
-using ArtworkModel = ArtLink.Domain.Models.Artwork;
-using ArtLink.Domain.Interfaces.Services;
 using ArtLink.Domain.Interfaces.Repositories;
+using ArtLink.Domain.Interfaces.Services;
 using Microsoft.Extensions.Logging;
+using ArtworkModel = ArtLink.Domain.Models.Artwork;
 
 namespace ArtLink.Services.Artwork;
 

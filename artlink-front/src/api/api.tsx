@@ -1,6 +1,7 @@
 import axios from 'axios';
-import * as types from '../types/authTypes';
+import * as types from '../types/types.tsx';
 import {jwtDecode} from 'jwt-decode';
+import { EmployerUpdateData } from '../types/types.tsx';
 
 const API_URL = 'http://localhost:7000/api';
 
@@ -15,6 +16,16 @@ export const getUserIdFromToken = (token: string): string | null => {
   try {
     const decoded = jwtDecode<{ sub: string }>(token);
     return decoded.sub;
+  } catch (e) {
+    console.error('Error decoding JWT:', e);
+    return null;
+  }
+};
+
+export const getUserRoleFromToken = (token: string): string | null => {
+  try {
+    const decoded = jwtDecode<{ Role: string }>(token);
+    return decoded.Role;
   } catch (e) {
     console.error('Error decoding JWT:', e);
     return null;
@@ -64,17 +75,12 @@ export const authApi = {
     return axios.get(`${API_URL}/artists/${id}`);
   },
   
-  updateArtist: (data: types.Artist) => {
+  updateArtist: (id: string, formData: FormData) => {
     const token = localStorage.getItem('token');
-
-    const updateData = {
-      ...data,
-      id: undefined
-    };
-    
-    return axios.put(`${API_URL}/artists/${data.id}`, updateData, {
+    return axios.put(`${API_URL}/artists/${id}`, formData, {
       headers: {
-        'Authorization': `Bearer ${token}`
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'multipart/form-data'
       }
     });
   },
@@ -89,4 +95,36 @@ export const authApi = {
       }
     });
   },
+
+  getCurrentEmployer: () => {
+    const token = localStorage.getItem('token');
+    var id
+    if (token != null) {
+      id = getUserIdFromToken(token)
+    }
+    return axios.get(`${API_URL}/employers/${id}`);
+  },
+
+  getEmployerById: (id: string) => {
+    return axios.get(`${API_URL}/employers/${id}`);
+  },
+
+  updateEmployer: (id: string, formData: EmployerUpdateData) => {
+    const token = localStorage.getItem('token');
+    return axios.put(`${API_URL}/employers/${id}`, formData, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    });
+  },
+
+  deleteEmployer: (id: string) => {
+    const token = localStorage.getItem('token');
+    return axios.delete(`${API_URL}/employers/${id}`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+  }
 };

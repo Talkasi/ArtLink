@@ -1,7 +1,7 @@
-using PortfolioModel = ArtLink.Domain.Models.Portfolio;
-using ArtLink.Domain.Interfaces.Services;
 using ArtLink.Domain.Interfaces.Repositories;
+using ArtLink.Domain.Interfaces.Services;
 using Microsoft.Extensions.Logging;
+using PortfolioModel = ArtLink.Domain.Models.Portfolio;
 
 namespace ArtLink.Services.Portfolio;
 

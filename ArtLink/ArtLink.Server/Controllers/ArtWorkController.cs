@@ -18,16 +18,13 @@ public class ArtworkController(IArtworkService service, IPortfolioService portfo
     /// <param name="dto">Данные о создаваемой работе.</param>
     /// <returns>Результат выполнения запроса.</returns>
     [HttpPost]
-    [Authorize(Policy = "ArtistOrAdmin")]
+    [Authorize(Policy = "Artist")]
     public async Task<IActionResult> Create([FromBody][Required] ArtworkDto dto)
     {
         logger.LogInformation("[ArtworkController][Create] Creating artwork in portfolio {PortfolioId} with title: {Title}", dto.PortfolioId, dto.Title);
 
         try
         {
-            var currentUserId = Guid.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value!);
-            var currentUserRole = User.FindFirst("Role")?.Value;
-            
             var ownershipCheck = await CheckPortfolioOwnershipAsync(dto.PortfolioId, "Create");
             if (ownershipCheck != null) return ownershipCheck;
             
@@ -102,7 +99,7 @@ public class ArtworkController(IArtworkService service, IPortfolioService portfo
     /// <param name="dto">Новые данные работы.</param>
     /// <returns>Результат выполнения запроса.</returns>
     [HttpPut("{id:guid}")]
-    [Authorize(Policy = "ArtistOrAdmin")]
+    [Authorize(Policy = "Artist")]
     public async Task<IActionResult> Update([FromRoute][Required] Guid id, [FromBody][Required] CreateArtworkDto dto)
     {
         logger.LogInformation("[ArtworkController][Update] Updating artwork: {ArtworkId}", id);
@@ -129,7 +126,7 @@ public class ArtworkController(IArtworkService service, IPortfolioService portfo
     /// <param name="id">Идентификатор работы.</param>
     /// <returns>Результат выполнения запроса.</returns>
     [HttpDelete("{id:guid}")]
-    [Authorize(Policy = "ArtistOrAdmin")]
+    [Authorize(Policy = "Artist")]
     public async Task<IActionResult> Delete([FromRoute][Required] Guid id)
     {
         logger.LogInformation("[ArtworkController][Delete] Deleting artwork: {ArtworkId}", id);

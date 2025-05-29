@@ -17,36 +17,28 @@ import {
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { authApi } from '../api/api.tsx';
-import { Artist } from '../types/types.tsx';
+import { Employer, EmployerUpdateData } from '../types/types.tsx';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import LogoutIcon from '@mui/icons-material/Logout';
+import BusinessIcon from '@mui/icons-material/Business';
 
-interface ArtistFormValues {
-  first_name: string;
-  last_name: string;
-  email: string;
-  bio: string;
-  experience: number;
-  profile_picture?: File | null;
-}
-
-const ArtistDashboardPage: React.FC = () => {
-  const [artist, setArtist] = useState<Artist | null>(null);
+const EmployerDashboardPage: React.FC = () => {
+  const [employer, setEmployer] = useState<Employer | null>(null);
   const [editMode, setEditMode] = useState(false);
   const [loading, setLoading] = useState(false);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetchArtistData();
+    fetchEmployerData();
   }, []);
 
-  const fetchArtistData = async () => {
+  const fetchEmployerData = async () => {
     try {
       setLoading(true);
-      const response = await authApi.getCurrentArtist();
-      setArtist(response.data);
+      const response = await authApi.getCurrentEmployer();
+      setEmployer(response.data);
     } catch (error) {
       console.error('Ошибка загрузки данных:', error);
     } finally {
@@ -62,7 +54,7 @@ const ArtistDashboardPage: React.FC = () => {
   const handleDeleteAccount = async () => {
     try {
       setLoading(true);
-      await authApi.deleteArtist(artist!.id);
+      await authApi.deleteEmployer(employer!.id);
       handleLogout();
     } catch (error) {
       console.error('Ошибка удаления аккаунта:', error);
@@ -72,23 +64,20 @@ const ArtistDashboardPage: React.FC = () => {
     }
   };
 
-  const handleSubmit = async (values: ArtistFormValues) => {
+  const handleSubmit = async (values: EmployerUpdateData) => {
     try {
       setLoading(true);
-      
-      const formData = new FormData();
-      formData.append('FirstName', values.first_name);
-      formData.append('LastName', values.last_name);
-      formData.append('Email', values.email);
-      formData.append('Bio', values.bio);
-      formData.append('Experience', values.experience.toString());
-      
-      if (values.profile_picture instanceof File) {
-        formData.append('ProfilePicture', values.profile_picture);
-      }
 
-      await authApi.updateArtist(artist?.id || '', formData);
-      await fetchArtistData();
+      const payload = {
+        id: employer?.id || '',
+        company_name: values.company_name || '',
+        email: values.email || '',
+        cp_first_name: values.cp_first_name || '',
+        cp_last_name: values.cp_last_name || '',
+      };
+        
+      await authApi.updateEmployer(employer?.id || '', payload);
+      await fetchEmployerData();
       setEditMode(false);
     } catch (error) {
       console.error('Ошибка обновления данных:', error);
@@ -97,7 +86,7 @@ const ArtistDashboardPage: React.FC = () => {
     }
   };
 
-  if (loading && !artist) {
+  if (loading && !employer) {
     return (
       <Container maxWidth="sm" sx={{ mt: 8, textAlign: 'center' }}>
         <CircularProgress />
@@ -105,7 +94,7 @@ const ArtistDashboardPage: React.FC = () => {
     );
   }
 
-  if (!artist) {
+  if (!employer) {
     return (
       <Container maxWidth="sm" sx={{ mt: 8, textAlign: 'center' }}>
         <Typography variant="h6">Данные не загружены</Typography>
@@ -117,22 +106,22 @@ const ArtistDashboardPage: React.FC = () => {
     <Container maxWidth="md" sx={{ mt: 4, mb: 4 }}>
       <Paper elevation={3} sx={{ p: 4 }}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
-          <Typography variant="h4">Личный кабинет художника</Typography>
+          <Typography variant="h4">Личный кабинет работодателя</Typography>
           <IconButton onClick={handleLogout} color="error" title="Выйти">
             <LogoutIcon />
           </IconButton>
         </Box>
 
         {editMode ? (
-          <EditArtistForm 
-            artist={artist} 
+          <EditEmployerForm 
+            employer={employer} 
             onCancel={() => setEditMode(false)} 
             onSubmit={handleSubmit}
             loading={loading}
           />
         ) : (
-          <ArtistProfile 
-            artist={artist} 
+          <EmployerProfile 
+            employer={employer} 
             onEdit={() => setEditMode(true)} 
             onDelete={() => setOpenDeleteDialog(true)}
           />
@@ -162,38 +151,35 @@ const ArtistDashboardPage: React.FC = () => {
   );
 };
 
-const ArtistProfile: React.FC<{
-  artist: Artist;
+const EmployerProfile: React.FC<{
+  employer: Employer;
   onEdit: () => void;
   onDelete: () => void;
-}> = ({ artist, onEdit, onDelete }) => {
+}> = ({ employer, onEdit, onDelete }) => {
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-      {/* <Avatar
-        src={artist.profile_picture ? `${process.env.REACT_APP_API_URL}${artist.profile_picture}` : '/default-avatar.png'}
-        sx={{ width: 150, height: 150, mb: 3 }}
-      /> */}
       <Avatar
-        src={artist.profile_picture 
-          ? `${process.env.REACT_APP_API_URL}${artist.profile_picture}?t=${new Date().getTime()}` 
-          : '/default-avatar.png'}
-      />
+        sx={{ 
+          width: 150, 
+          height: 150, 
+          mb: 3,
+          backgroundColor: 'primary.main'
+        }}
+      >
+        <BusinessIcon sx={{ fontSize: 60 }} />
+      </Avatar>
+      
       <Typography variant="h5" gutterBottom>
-        {artist.first_name} {artist.last_name}
+        {employer.company_name}
       </Typography>
+      
       <Typography variant="body1" gutterBottom>
-        <strong>Email:</strong> {artist.email}
+        <strong>Контактное лицо:</strong> {employer.cp_first_name} {employer.cp_last_name}
       </Typography>
-      {artist.bio && (
-        <Typography variant="body1" gutterBottom sx={{ maxWidth: 600, textAlign: 'center' }}>
-          <strong>О себе:</strong> {artist.bio}
-        </Typography>
-      )}
-      {artist.experience !== null && (
-        <Typography variant="body1" gutterBottom>
-          <strong>Опыт:</strong> {artist.experience} {artist.experience === undefined ? 'Не известно' : artist.experience === 1 ? 'год' : artist.experience < 5 ? 'года' : 'лет'}
-        </Typography>
-      )}
+      
+      <Typography variant="body1" gutterBottom>
+        <strong>Email:</strong> {employer.email}
+      </Typography>
 
       <Box sx={{ mt: 4, display: 'flex', gap: 2 }}>
         <Button 
@@ -216,49 +202,25 @@ const ArtistProfile: React.FC<{
   );
 };
 
-const EditArtistForm: React.FC<{
-  artist: Artist;
+const EditEmployerForm: React.FC<{
+  employer: Employer;
   onCancel: () => void;
-  onSubmit: (values: ArtistFormValues) => void;
+  onSubmit: (values: EmployerUpdateData) => void;
   loading: boolean;
-}> = ({ artist, onCancel, onSubmit, loading }) => {
-  const [values, setValues] = useState<ArtistFormValues>({ 
-    first_name: artist.first_name || '',
-    last_name: artist.last_name || '',
-    email: artist.email || '',
-    bio: artist.bio || '',
-    experience: artist.experience || 0,
-    profile_picture: null
+}> = ({ employer, onCancel, onSubmit, loading }) => {
+  const [values, setValues] = useState<EmployerUpdateData>({ 
+    company_name: employer.company_name,
+    email: employer.email,
+    cp_first_name: employer.cp_first_name,
+    cp_last_name: employer.cp_last_name
   });
-  
-  const [preview, setPreview] = useState<string | null>(
-    artist.profile_picture ? `${process.env.REACT_APP_API_URL}${artist.profile_picture}` : null
-  );
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setValues(prev => ({
       ...prev,
-      [name]: name === 'experience' ? parseInt(value) || 0 : value
+      [name]: value
     }));
-  };
-
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0];
-      setValues(prev => ({ ...prev, profile_picture: file }));
-      
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPreview(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
-  const handleRemoveImage = () => {
-    setValues(prev => ({ ...prev, profile_picture: null }));
-    setPreview(null);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -270,48 +232,22 @@ const EditArtistForm: React.FC<{
     <Box component="form" onSubmit={handleSubmit}>
       <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mb: 3 }}>
         <Avatar
-          src={preview || (artist.profile_picture ? `${process.env.REACT_APP_API_URL}${artist.profile_picture}` : '/default-avatar.png')}
-          sx={{ width: 150, height: 150, mb: 2 }}
-        />
-        <Box sx={{ display: 'flex', gap: 1 }}>
-          <Button
-            variant="outlined"
-            component="label"
-          >
-            Выбрать фото
-            <input
-              type="file"
-              hidden
-              accept="image/*"
-              onChange={handleImageChange}
-            />
-          </Button>
-          {(preview || artist.profile_picture) && (
-            <Button
-              variant="outlined"
-              color="error"
-              onClick={handleRemoveImage}
-            >
-              Удалить
-            </Button>
-          )}
-        </Box>
+          sx={{ 
+            width: 150, 
+            height: 150, 
+            mb: 2,
+            backgroundColor: 'primary.main'
+          }}
+        >
+          <BusinessIcon sx={{ fontSize: 60 }} />
+        </Avatar>
       </Box>
 
       <TextField
         fullWidth
-        label="Имя"
-        name="first_name"
-        value={values.first_name}
-        onChange={handleChange}
-        margin="normal"
-        required
-      />
-      <TextField
-        fullWidth
-        label="Фамилия"
-        name="last_name"
-        value={values.last_name}
+        label="Название компании"
+        name="company_name"
+        value={values.company_name}
         onChange={handleChange}
         margin="normal"
         required
@@ -328,23 +264,21 @@ const EditArtistForm: React.FC<{
       />
       <TextField
         fullWidth
-        label="О себе"
-        name="bio"
-        multiline
-        rows={4}
-        value={values.bio}
+        label="Имя контактного лица"
+        name="cp_first_name"
+        value={values.cp_first_name}
         onChange={handleChange}
         margin="normal"
+        required
       />
       <TextField
         fullWidth
-        label="Опыт (в годах)"
-        name="experience"
-        type="number"
-        value={values.experience}
+        label="Фамилия контактного лица"
+        name="cp_last_name"
+        value={values.cp_last_name}
         onChange={handleChange}
         margin="normal"
-        inputProps={{ min: 0 }}
+        required
       />
 
       <Box sx={{ mt: 3, display: 'flex', justifyContent: 'flex-end', gap: 2 }}>
@@ -368,4 +302,4 @@ const EditArtistForm: React.FC<{
   );
 };
 
-export default ArtistDashboardPage;
+export default EmployerDashboardPage;

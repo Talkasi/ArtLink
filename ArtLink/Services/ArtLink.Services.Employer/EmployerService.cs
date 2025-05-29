@@ -1,7 +1,7 @@
-using EmployerModel = ArtLink.Domain.Models.Employer;
-using ArtLink.Domain.Interfaces.Services;
 using ArtLink.Domain.Interfaces.Repositories;
+using ArtLink.Domain.Interfaces.Services;
 using Microsoft.Extensions.Logging;
+using EmployerModel = ArtLink.Domain.Models.Employer;
 
 namespace ArtLink.Services.Employer;
 

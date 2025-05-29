@@ -3,13 +3,28 @@ import { Container, Paper, Typography, Link } from '@mui/material';
 import { Link as RouterLink } from 'react-router-dom';
 import { UserTypeSelect } from '../components/Auth/UserTypeSelect.tsx';
 import LoginForm from '../components/Auth/LoginForm.tsx';
-import { UserType } from '../types/authTypes.tsx';
+import { UserType } from '../types/types.tsx';
+import {getUserRoleFromToken} from '../api/api.tsx'
+import { printValue } from 'yup';
 
 const LoginPage: React.FC = () => {
   const [userType, setUserType] = useState<UserType | null>(null);
 
   const handleLoginSuccess = () => {
-    window.location.href = '/artist';
+    const token = localStorage.getItem('token');
+    var role
+    if (token != null) {
+      role = getUserRoleFromToken(token)
+      printValue(role)
+    }
+
+    if (role === 'Artist') {
+      window.location.href = '/artist';
+    } else if (role === 'Employer') {
+      window.location.href = '/employer';
+    } else {
+      window.location.href = '/';
+    }
   };
 
   return (
