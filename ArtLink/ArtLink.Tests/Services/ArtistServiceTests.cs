@@ -1,182 +1,159 @@
-using ArtLink.Domain.Interfaces.Repositories;
-using ArtLink.Domain.Models;
+using Allure.Xunit.Attributes;
+using ArtLink.DataAccess.Context;
+using ArtLink.DataAccess.Repositories;
 using ArtLink.Services.Artist;
-using Microsoft.Extensions.Logging;
-using Moq;
+using ArtLink.Tests.Fixtures;
+using FluentAssertions;
+using Microsoft.Data.Sqlite;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace ArtLink.Tests.Services;
 
-public class ArtistServiceTests
+[AllureSuite("Artist Service Tests")]
+[AllureSubSuite("Classical Style (SQLite InMemory)")]
+public class ArtistServiceTests : IDisposable, IClassFixture<ArtistFixture>
 {
-    private readonly Mock<IArtistRepository> _artistRepositoryMock;
-    private readonly ArtistService _artistService;
+    private readonly SqliteConnection _connection;
+    private readonly ArtLinkDbContext _dbContext;
+    private readonly ArtistService _sut;
+    private readonly ArtistFixture _fixture;
 
-    public ArtistServiceTests()
+    public ArtistServiceTests(ArtistFixture fixture)
     {
-        _artistRepositoryMock = new Mock<IArtistRepository>();
-        var loggerMock = new Mock<ILogger<ArtistService>>();
-        _artistService = new ArtistService(_artistRepositoryMock.Object, loggerMock.Object);
+        _connection = new SqliteConnection("DataSource=:memory:");
+        _connection.Open();
+
+        var options = new DbContextOptionsBuilder<ArtLinkDbContext>()
+            .UseSqlite(_connection)
+            .Options;
+
+        _dbContext = new ArtLinkDbContext(options);
+        _dbContext.Database.EnsureCreated();
+        
+        _fixture = fixture;
+
+        var artistRepository = new ArtistRepository(_dbContext,  NullLogger<ArtistRepository>.Instance);
+        _sut = new ArtistService(artistRepository, NullLogger<ArtistService>.Instance);
     }
 
     [Fact]
-    public async Task GetArtistByIdAsync_ReturnsArtist_WhenArtistExists()
+    [AllureFeature("AddArtistAsync + GetArtistByIdAsync")]
+    [AllureStory("Positive case - add and fetch")]
+    public async Task AddAndGetArtist_ShouldReturnSameArtist()
     {
+        var artist = _fixture.CreateArtist(); 
         // Arrange
-        var id = Guid.NewGuid();
-        var expected = new Artist(id, "hash", "artist@example.com", "Alice", "Walker", "A great artist", 5, "path/to/pic.jpg");
-
-        _artistRepositoryMock.Setup(r => r.GetByIdAsync(id))
-            .ReturnsAsync(expected);
+        var id = await _sut.AddArtistAsync(artist.FirstName, artist.LastName, artist.Email, artist.PasswordHash!,
+                                           artist.Bio, artist.ProfilePicturePath, artist.Experience);
 
         // Act
-        var result = await _artistService.GetArtistByIdAsync(id);
+        var result = await _sut.GetArtistByIdAsync(id);
 
         // Assert
-        Assert.NotNull(result);
-        Assert.Equal(expected.Id, result.Id);
+        result.Should().NotBeNull();
+        result.Email.Should().Be(artist.Email);
     }
 
     [Fact]
-    public async Task GetAllArtistsAsync_ReturnsAllArtists()
+    [AllureFeature("GetAllArtistsAsync")]
+    [AllureStory("Positive case - multiple artists")]
+    public async Task GetAllArtists_ShouldReturnAll()
     {
+        var artist1 = _fixture.CreateArtist(); 
+        var artist2 = _fixture.CreateArtist(); 
         // Arrange
-        var artists = new List<Artist>
-        {
-            new Artist(Guid.NewGuid(), null, "a@example.com", "Anna", "Smith", "Bio A", 2, "picA.jpg"),
-            new Artist(Guid.NewGuid(), null, "b@example.com", "Bob", "Brown", "Bio B", 3, "picB.jpg")
-        };
-
-        _artistRepositoryMock.Setup(r => r.GetAllAsync())
-            .ReturnsAsync(artists);
+        await _sut.AddArtistAsync(artist1.FirstName, artist1.LastName, artist1.Email, artist1.PasswordHash!,
+            artist1.Bio, artist1.ProfilePicturePath, artist1.Experience);
+        await _sut.AddArtistAsync(artist2.FirstName, artist2.LastName, artist2.Email, artist2.PasswordHash!,
+            artist2.Bio, artist2.ProfilePicturePath, artist2.Experience);
 
         // Act
-        var result = await _artistService.GetAllArtistsAsync();
+        var result = await _sut.GetAllArtistsAsync();
 
         // Assert
-        Assert.Equal(2, result.Count());
+        result.Should().HaveCount(2);
     }
 
     [Fact]
-    public async Task AddArtistAsync_CallsRepositoryWithCorrectParameters()
+    [AllureFeature("UpdateArtistAsync")]
+    [AllureStory("Positive case - artist updated")]
+    public async Task UpdateArtist_ShouldChangeFields()
     {
+        var artist = _fixture.CreateArtist(); 
         // Arrange
-        const string firstName = "Emily";
-        const string lastName = "Clark";
-        const string email = "emily@example.com";
-        const string passwordHash = "hashedPassword"; // Здесь указываем уже готовый хеш
-        const string bio = "Painter from NY";
-        const string profilePicturePath = "pic.jpg";
-        const int experience = 4;
+        var id = await _sut.AddArtistAsync(artist.FirstName, artist.LastName, artist.Email, artist.PasswordHash!,
+            artist.Bio, artist.ProfilePicturePath, artist.Experience);
 
         // Act
-        await _artistService.AddArtistAsync(firstName, lastName, email, passwordHash, bio, profilePicturePath, experience);
+        await _sut.UpdateArtistAsync(id, "Johnny", artist.LastName, artist.Email,
+            artist.Bio, artist.ProfilePicturePath, 10);
+
+        var updated = await _sut.GetArtistByIdAsync(id);
 
         // Assert
-        _artistRepositoryMock.Verify(r => r.AddAsync(
-            firstName, lastName, email, passwordHash, bio, profilePicturePath, experience), Times.Once);
+        updated.Should().NotBeNull();
+        updated.FirstName.Should().Be("Johnny");
+        updated.Experience.Should().Be(10);
     }
 
     [Fact]
-    public async Task UpdateArtistAsync_CallsRepositoryWithCorrectParameters()
+    [AllureFeature("DeleteArtistAsync")]
+    [AllureStory("Positive case - artist deleted")]
+    public async Task DeleteArtist_ShouldRemoveFromDb()
     {
         // Arrange
-        var id = Guid.NewGuid();
-        const string firstName = "John";
-        const string lastName = "Doe";
-        const string email = "john.doe@example.com";
-        const string bio = "Experienced sculptor";
-        const string profilePicturePath = "newpic.jpg";
-        const int experience = 10;
+        var artist = _fixture.CreateArtist(); 
+        var id = await _sut.AddArtistAsync(artist.FirstName, artist.LastName, artist.Email, artist.PasswordHash!,
+            artist.Bio, artist.ProfilePicturePath, artist.Experience);
 
         // Act
-        await _artistService.UpdateArtistAsync(id, firstName, lastName, email, bio, profilePicturePath, experience);
+        await _sut.DeleteArtistAsync(id);
+        var deleted = await _sut.GetArtistByIdAsync(id);
 
         // Assert
-        _artistRepositoryMock.Verify(r => r.UpdateAsync(
-            id, firstName, lastName, email, bio, profilePicturePath, experience), Times.Once);
+        deleted.Should().BeNull();
     }
 
     [Fact]
-    public async Task DeleteArtistAsync_CallsRepositoryWithCorrectId()
+    [AllureFeature("LoginArtistAsync")]
+    [AllureStory("Positive case - valid credentials")]
+    public async Task LoginArtist_ShouldReturnArtist_WhenCredentialsMatch()
     {
         // Arrange
-        var id = Guid.NewGuid();
+        var artist = _fixture.CreateArtist();
+        await _sut.AddArtistAsync(artist.FirstName, artist.LastName, artist.Email, artist.PasswordHash!,
+            artist.Bio, artist.ProfilePicturePath, artist.Experience);
 
         // Act
-        await _artistService.DeleteArtistAsync(id);
+        var loggedIn = await _sut.LoginArtistAsync(artist.Email, artist.PasswordHash!);
 
         // Assert
-        _artistRepositoryMock.Verify(r => r.DeleteAsync(id), Times.Once);
+        loggedIn.Should().NotBeNull();
+        loggedIn.Email.Should().Be(artist.Email);
     }
-    
+
     [Fact]
-    public async Task GetArtistByIdAsync_ReturnsNull_WhenArtistDoesNotExist()
+    [AllureFeature("LoginArtistAsync")]
+    [AllureStory("Negative case - wrong password")]
+    public async Task LoginArtist_ShouldReturnNull_WhenWrongPassword()
     {
         // Arrange
-        var id = Guid.NewGuid();
-        _artistRepositoryMock.Setup(r => r.GetByIdAsync(id))
-            .ReturnsAsync((Artist?)null);
+        var artist = _fixture.CreateArtist();
+        await _sut.AddArtistAsync(artist.FirstName, artist.LastName, artist.Email, artist.PasswordHash!,
+            artist.Bio, artist.ProfilePicturePath, artist.Experience);
 
         // Act
-        var result = await _artistService.GetArtistByIdAsync(id);
+        var loggedIn = await _sut.LoginArtistAsync(artist.Email, "wrong");
 
         // Assert
-        Assert.Null(result);
+        loggedIn.Should().BeNull();
     }
 
-    [Fact]
-    public async Task GetAllArtistsAsync_ReturnsEmptyList_WhenNoArtistsExist()
+    public void Dispose()
     {
-        // Arrange
-        _artistRepositoryMock.Setup(r => r.GetAllAsync())
-            .ReturnsAsync(new List<Artist>());
-
-        // Act
-        var result = await _artistService.GetAllArtistsAsync();
-
-        // Assert
-        Assert.Empty(result);
-    }
-
-    [Fact]
-    public async Task UpdateArtistAsync_PreservesOriginalValues_WhenPartialUpdate()
-    {
-        // Arrange
-        var originalArtist = new Artist(
-            Guid.NewGuid(), 
-            "hash", 
-            "original@email.com", 
-            "Original", 
-            "Name", 
-            "Original Bio", 
-            3, 
-            "original.jpg"
-        );
-
-        _artistRepositoryMock.Setup(r => r.GetByIdAsync(originalArtist.Id))
-            .ReturnsAsync(originalArtist);
-
-        // Act - Обновляем только email
-        await _artistService.UpdateArtistAsync(
-            originalArtist.Id,
-            originalArtist.FirstName,
-            originalArtist.LastName,
-            "new@email.com",
-            originalArtist.Bio,
-            originalArtist.ProfilePicturePath,
-            originalArtist.Experience
-        );
-
-        // Assert
-        _artistRepositoryMock.Verify(r => r.UpdateAsync(
-            originalArtist.Id,
-            originalArtist.FirstName,
-            originalArtist.LastName,
-            "new@email.com",
-            originalArtist.Bio,
-            originalArtist.ProfilePicturePath,
-            originalArtist.Experience
-        ), Times.Once);
+        _dbContext.Dispose();
+        _connection.Close();
+        _connection.Dispose();
     }
 }
-

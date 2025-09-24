@@ -1,98 +1,230 @@
+using Allure.Xunit.Attributes;
 using ArtLink.DataAccess.Context;
 using ArtLink.DataAccess.Repositories;
+using ArtLink.Tests.Fixtures;
+using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging.Abstractions;
 
-namespace ArtLink.Tests.Repositories
+namespace ArtLink.Tests.Repositories;
+
+[AllureSuite("Artist Repository Tests")]
+public class ArtistRepositoryTests(ArtistFixture fixture) : IClassFixture<ArtistFixture>
 {
-    public class ArtistRepositoryTests
+    private static ArtistRepository GetInMemoryRepository()
     {
-        private static ArtistRepository GetInMemoryRepository()
+        var options = new DbContextOptionsBuilder<ArtLinkDbContext>()
+            .UseInMemoryDatabase(Guid.NewGuid().ToString())
+            .Options;
+
+        var context = new ArtLinkDbContext(options);
+        var logger = NullLogger<ArtistRepository>.Instance;
+        return new ArtistRepository(context, logger);
+    }
+
+    [Fact]
+    [AllureFeature("AddAsync + GetByIdAsync")]
+    [AllureStory("Positive case - artist added and retrieved")]
+    public async Task AddAndGetById_ShouldReturnCorrectArtist()
+    {
+        // Arrange
+        var repository = GetInMemoryRepository();
+        var artist = fixture.CreateArtist();
+
+        var id = await repository.AddAsync(
+            artist.FirstName, 
+            artist.LastName, 
+            artist.Email, 
+            artist.PasswordHash!, 
+            artist.Bio, 
+            artist.ProfilePicturePath, 
+            artist.Experience);
+
+        // Act
+        var result = await repository.GetByIdAsync(id);
+
+        // Assert
+        result.Should().NotBeNull();
+        result.FirstName.Should().Be(artist.FirstName);
+        result.LastName.Should().Be(artist.LastName);
+        result.Email.Should().Be(artist.Email);
+    }
+
+    [Fact]
+    [AllureFeature("GetAllAsync")]
+    [AllureStory("Positive case - multiple artists")]
+    public async Task GetAll_ShouldReturnAllArtists()
+    {
+        var repository = GetInMemoryRepository();
+
+        for (int i = 0; i < 3; i++)
         {
-            var options = new DbContextOptionsBuilder<ArtLinkDbContext>()
-                .UseInMemoryDatabase(Guid.NewGuid().ToString())
-                .Options;
-
-            var context = new ArtLinkDbContext(options);
-            var logger = NullLogger<ArtistRepository>.Instance;
-
-            return new ArtistRepository(context, logger);
+            var artist = fixture.CreateArtist(firstName: $"Artist{i}");
+            await repository.AddAsync(
+                artist.FirstName, 
+                artist.LastName, 
+                artist.Email, 
+                artist.PasswordHash!, 
+                artist.Bio, 
+                artist.ProfilePicturePath, 
+                artist.Experience);
         }
 
-        [Fact]
-        public async Task AddAndGetByIdAsync_ShouldReturnCorrectArtist()
-        {
-            // Arrange
-            var repository = GetInMemoryRepository();
-            const string firstName = "John";
-            const string lastName = "Doe";
-            const string email = "john.doe@example.com";
-            const string passwordHash = "hashed_pass";
-            const string bio = "I am an artist";
-            const string profilePicturePath = "profile.jpg";
-            const int experience = 5;
+        var all = await repository.GetAllAsync();
+        all.Should().HaveCount(3);
+    }
 
-            await repository.AddAsync(firstName, lastName, email, passwordHash, bio, profilePicturePath, experience);
+    [Fact]
+    [AllureFeature("UpdateAsync")]
+    [AllureStory("Positive case - update artist")]
+    public async Task Update_ShouldChangeArtistFields()
+    {
+        var repository = GetInMemoryRepository();
+        var artist = fixture.CreateArtist();
+        var id = await repository.AddAsync(
+            artist.FirstName, 
+            artist.LastName, 
+            artist.Email, 
+            artist.PasswordHash!, 
+            artist.Bio, 
+            artist.ProfilePicturePath, 
+            artist.Experience);
 
-            var all = await repository.GetAllAsync();
-            var added = all.FirstOrDefault();
+        // Act
+        await repository.UpdateAsync(id, "UpdatedFirst", "UpdatedLast", "updated@example.com", "Updated bio", "/new.jpg", 10);
 
-            // Act
-            var result = await repository.GetByIdAsync(added!.Id);
+        var updated = await repository.GetByIdAsync(id);
 
-            // Assert
-            Assert.NotNull(result);
-            Assert.Equal(firstName, result.FirstName);
-            Assert.Equal(lastName, result.LastName);
-        }
+        // Assert
+        updated!.FirstName.Should().Be("UpdatedFirst");
+        updated.LastName.Should().Be("UpdatedLast");
+        updated.Email.Should().Be("updated@example.com");
+        updated.Bio.Should().Be("Updated bio");
+        updated.ProfilePicturePath.Should().Be("/new.jpg");
+        updated.Experience.Should().Be(10);
+    }
 
-        [Fact]
-        public async Task UpdateAsync_ShouldUpdateArtist()
-        {
-            var repository = GetInMemoryRepository();
+    [Fact]
+    [AllureFeature("DeleteAsync")]
+    [AllureStory("Positive case - delete artist")]
+    public async Task Delete_ShouldRemoveArtist()
+    {
+        var repository = GetInMemoryRepository();
+        var artist = fixture.CreateArtist();
+        var id = await repository.AddAsync(
+            artist.FirstName, 
+            artist.LastName, 
+            artist.Email, 
+            artist.PasswordHash!, 
+            artist.Bio, 
+            artist.ProfilePicturePath, 
+            artist.Experience);
 
-            await repository.AddAsync("Alice", "Smith", "alice@example.com", "pass", "bio", "path.jpg", 2);
-            var artist = (await repository.GetAllAsync()).First();
+        await repository.DeleteAsync(id);
+        var deleted = await repository.GetByIdAsync(id);
 
-            await repository.UpdateAsync(artist.Id, "AliceUpdated", "SmithUpdated", "alice@new.com", "new bio", "newpath.jpg", 10);
+        deleted.Should().BeNull();
+    }
 
-            var updated = await repository.GetByIdAsync(artist.Id);
+    [Fact]
+    [AllureFeature("SearchByPromptAsync")]
+    [AllureStory("Positive case - search artists")]
+    public async Task SearchByPrompt_ShouldReturnMatchingArtists()
+    {
+        var repository = GetInMemoryRepository();
+        
+        var artist1 = fixture.CreateArtist(firstName: "Anna", lastName: "Taylor", email: "anna@example.com");
+        var artist2 = fixture.CreateArtist(firstName: "Bob", lastName: "Builder", email: "bob@example.com");
+        
+        await repository.AddAsync(artist1.FirstName, artist1.LastName, artist1.Email, "pass", null, null, null);
+        await repository.AddAsync(artist2.FirstName, artist2.LastName, artist2.Email, "pass", null, null, null);
 
-            Assert.NotNull(updated);
-            Assert.Equal("AliceUpdated", updated.FirstName);
-            Assert.Equal("SmithUpdated", updated.LastName);
-            Assert.Equal("alice@new.com", updated.Email);
-            Assert.Equal("new bio", updated.Bio);
-            Assert.Equal("newpath.jpg", updated.ProfilePicturePath);
-            Assert.Equal(10, updated.Experience);
-        }
+        var results = (await repository.SearchByPromptAsync("Ann")).ToList();
 
-        [Fact]
-        public async Task DeleteAsync_ShouldRemoveArtist()
-        {
-            var repository = GetInMemoryRepository();
+        results.Should().HaveCount(1);
+        results[0].FirstName.Should().Be("Anna");
+    }
 
-            await repository.AddAsync("Delete", "Me", "deleteme@example.com", "pass", null, null, null);
-            var artist = (await repository.GetAllAsync()).First();
+    [Fact]
+    [AllureFeature("SearchByPromptAsync")]
+    [AllureStory("Negative case - no matches")]
+    public async Task SearchByPrompt_NoMatch_ShouldReturnEmpty()
+    {
+        var repository = GetInMemoryRepository();
+        var artist = fixture.CreateArtist(firstName: "Anna", lastName: "Taylor", email: "anna@example.com");
+        await repository.AddAsync(artist.FirstName, artist.LastName, artist.Email, "pass", null, null, null);
 
-            await repository.DeleteAsync(artist.Id);
-            var deleted = await repository.GetByIdAsync(artist.Id);
+        var results = await repository.SearchByPromptAsync("ZZZ");
 
-            Assert.Null(deleted);
-        }
+        results.Should().BeEmpty();
+    }
 
-        [Fact]
-        public async Task SearchByPromptAsync_ShouldReturnMatchingArtists()
-        {
-            var repository = GetInMemoryRepository();
+    [Fact]
+    [AllureFeature("LoginAsync")]
+    [AllureStory("Positive case - login success")]
+    public async Task Login_ShouldReturnArtist_WhenCredentialsMatch()
+    {
+        var repository = GetInMemoryRepository();
+        var artist = fixture.CreateArtist(email: "login@test.com");
+        await repository.AddAsync(
+            artist.FirstName, 
+            artist.LastName, 
+            artist.Email, 
+            artist.PasswordHash!, 
+            artist.Bio, 
+            artist.ProfilePicturePath, 
+            artist.Experience);
 
-            await repository.AddAsync("Anna", "Taylor", "anna@example.com", "pass", null, null, null);
-            await repository.AddAsync("Bob", "Builder", "bob@example.com", "pass", null, null, null);
+        var result = await repository.LoginAsync(artist.Email, artist.PasswordHash!);
 
-            var results = (await repository.SearchByPromptAsync("Ann")).ToList();
+        result.Should().NotBeNull();
+        result.Email.Should().Be("login@test.com");
+    }
 
-            Assert.Single(results);
-            Assert.Equal("Anna", results[0].FirstName);
-        }
+    [Fact]
+    [AllureFeature("LoginAsync")]
+    [AllureStory("Negative case - login fail")]
+    public async Task Login_ShouldReturnNull_WhenCredentialsIncorrect()
+    {
+        var repository = GetInMemoryRepository();
+        var artist = fixture.CreateArtist(email: "login@test.com");
+        await repository.AddAsync(
+            artist.FirstName, 
+            artist.LastName, 
+            artist.Email, 
+            artist.PasswordHash!, 
+            artist.Bio, 
+            artist.ProfilePicturePath, 
+            artist.Experience);
+
+        var result = await repository.LoginAsync(artist.Email, "wrongpass");
+
+        result.Should().BeNull();
+    }
+
+    [Fact]
+    [AllureFeature("GetByIdAsync")]
+    [AllureStory("Exception handling - non-existent id update")]
+    public async Task Update_NonExistentId_ShouldNotThrow()
+    {
+        var repository = GetInMemoryRepository();
+        var nonExistentId = Guid.NewGuid();
+
+        Func<Task> act = async () => await repository.UpdateAsync(nonExistentId, "x", "y", "z@example.com", null, null, null);
+
+        await act.Should().NotThrowAsync();
+    }
+
+    [Fact]
+    [AllureFeature("DeleteAsync")]
+    [AllureStory("Exception handling - non-existent id delete")]
+    public async Task Delete_NonExistentId_ShouldNotThrow()
+    {
+        var repository = GetInMemoryRepository();
+        var nonExistentId = Guid.NewGuid();
+
+        Func<Task> act = async () => await repository.DeleteAsync(nonExistentId);
+
+        await act.Should().NotThrowAsync();
     }
 }
