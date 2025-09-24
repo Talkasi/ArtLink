@@ -7,15 +7,15 @@ using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
 
-namespace ArtLink.Tests.Services;
+namespace ArtLink.Tests.UnitTests.Services;
 
-public class ContractServiceTests : IClassFixture<ContractFixture>
+public class ContractServiceUnitTests : IClassFixture<ContractFixture>
 {
     private readonly Mock<IContractRepository> _mockRepo;
     private readonly ContractService _contractService;
     private readonly ContractFixture _fixture;
 
-    public ContractServiceTests(ContractFixture fixture)
+    public ContractServiceUnitTests(ContractFixture fixture)
     {
         _fixture = fixture;
         _mockRepo = new Mock<IContractRepository>();

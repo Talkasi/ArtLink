@@ -40,4 +40,11 @@
       <ProjectReference Include="..\Services\ArtLink.Services.Technique\ArtLink.Services.Technique.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Common\" />
+      <Folder Include="E2ETests\" />
+      <Folder Include="IntegrationTests\" />
+      <Folder Include="UnitTests\" />
+    </ItemGroup>
+
 </Project>

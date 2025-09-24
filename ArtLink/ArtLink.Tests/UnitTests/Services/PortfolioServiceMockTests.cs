@@ -7,18 +7,18 @@ using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
 
-namespace ArtLink.Tests.Services;
+namespace ArtLink.Tests.UnitTests.Services;
 
 [AllureSuite("Portfolio Service Tests")]
 [AllureSubSuite("London Style (with Mocks)")]
-public class PortfolioServiceMockTests : IClassFixture<PortfolioFixture>
+public class PortfolioServiceMockUnitTests : IClassFixture<PortfolioFixture>
 {
     private readonly Mock<IPortfolioRepository> _portfolioRepositoryMock;
     private readonly Mock<ILogger<PortfolioService>> _loggerMock;
     private readonly PortfolioService _sut;
     private readonly PortfolioFixture _fixture;
 
-    public PortfolioServiceMockTests(PortfolioFixture fixture)
+    public PortfolioServiceMockUnitTests(PortfolioFixture fixture)
     {
         _fixture = fixture;
         _portfolioRepositoryMock = new Mock<IPortfolioRepository>();

@@ -7,17 +7,17 @@ using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
 
-namespace ArtLink.Tests.Services;
+namespace ArtLink.Tests.UnitTests.Services;
 
 [AllureSuite("Artwork Service Tests")]
 [AllureSubSuite("London Style (with Mocks)")]
-public class ArtworkServiceMockTests : IClassFixture<ArtworkFixture>
+public class ArtworkServiceMockUnitTests : IClassFixture<ArtworkFixture>
 {
     private readonly Mock<IArtworkRepository> _artworkRepositoryMock;
     private readonly ArtworkService _sut;
     private readonly ArtworkFixture _fixture;
 
-    public ArtworkServiceMockTests(ArtworkFixture fixture)
+    public ArtworkServiceMockUnitTests(ArtworkFixture fixture)
     {
         _fixture = fixture;
         _artworkRepositoryMock = new Mock<IArtworkRepository>();

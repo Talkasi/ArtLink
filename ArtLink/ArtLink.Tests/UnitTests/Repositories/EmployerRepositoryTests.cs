@@ -8,10 +8,10 @@ using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging.Abstractions;
 
-namespace ArtLink.Tests.Repositories;
+namespace ArtLink.Tests.UnitTests.Repositories;
 
 [AllureSuite("Employer Repository Tests")]
-public class EmployerRepositoryTests(EmployerFixture fixture) : IClassFixture<EmployerFixture>
+public class EmployerRepositoryUnitTests(EmployerFixture fixture) : IClassFixture<EmployerFixture>
 {
     private static ArtLinkDbContext CreateContext()
     {

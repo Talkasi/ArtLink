@@ -6,10 +6,10 @@ using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging.Abstractions;
 
-namespace ArtLink.Tests.Repositories;
+namespace ArtLink.Tests.UnitTests.Repositories;
 
 [AllureSuite("Artist Repository Tests")]
-public class ArtistRepositoryTests(ArtistFixture fixture) : IClassFixture<ArtistFixture>
+public class ArtistRepositoryUnitTests(ArtistFixture fixture) : IClassFixture<ArtistFixture>
 {
     private static ArtistRepository GetInMemoryRepository()
     {

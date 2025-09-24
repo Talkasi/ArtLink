@@ -8,18 +8,18 @@ using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging.Abstractions;
 
-namespace ArtLink.Tests.Services;
+namespace ArtLink.Tests.UnitTests.Services;
 
 [AllureSuite("Artist Service Tests")]
 [AllureSubSuite("Classical Style (SQLite InMemory)")]
-public class ArtistServiceTests : IDisposable, IClassFixture<ArtistFixture>
+public class ArtistServiceUnitTests : IDisposable, IClassFixture<ArtistFixture>
 {
     private readonly SqliteConnection _connection;
     private readonly ArtLinkDbContext _dbContext;
     private readonly ArtistService _sut;
     private readonly ArtistFixture _fixture;
 
-    public ArtistServiceTests(ArtistFixture fixture)
+    public ArtistServiceUnitTests(ArtistFixture fixture)
     {
         _connection = new SqliteConnection("DataSource=:memory:");
         _connection.Open();

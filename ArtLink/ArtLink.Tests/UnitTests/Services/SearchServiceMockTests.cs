@@ -7,11 +7,11 @@ using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
 
-namespace ArtLink.Tests.Services;
+namespace ArtLink.Tests.UnitTests.Services;
 
 [AllureSuite("Search Service Tests")]
 [AllureSubSuite("London Style (with Mocks)")]
-public class SearchServiceMockTests : IClassFixture<ArtistFixture>, IClassFixture<EmployerFixture>, IClassFixture<ArtworkFixture>
+public class SearchServiceMockUnitTests : IClassFixture<ArtistFixture>, IClassFixture<EmployerFixture>, IClassFixture<ArtworkFixture>
 {
     private readonly Mock<IArtistRepository> _artistRepoMock;
     private readonly Mock<IEmployerRepository> _employerRepoMock;
@@ -21,7 +21,7 @@ public class SearchServiceMockTests : IClassFixture<ArtistFixture>, IClassFixtur
     private readonly EmployerFixture _employerFixture;
     private readonly ArtworkFixture _artworkFixture;
 
-    public SearchServiceMockTests(ArtistFixture artistFixture, EmployerFixture employerFixture, ArtworkFixture artworkFixture)
+    public SearchServiceMockUnitTests(ArtistFixture artistFixture, EmployerFixture employerFixture, ArtworkFixture artworkFixture)
     {
         _artistFixture = artistFixture;
         _employerFixture = employerFixture;
