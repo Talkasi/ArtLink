@@ -3,13 +3,5 @@
   <RunConfiguration>
     <MaxCpuCount>0</MaxCpuCount>
     <TestSessionTimeout>600000</TestSessionTimeout>
-    <EnvironmentVariables>
-      <ALLURE_RESULTS_DIR>.\allure-results</ALLURE_RESULTS_DIR>
-    </EnvironmentVariables>
   </RunConfiguration>
-
-  <TestRunParameters>
-    <Parameter name="BaseUrl" value="https://localhost:7000" />
-    <Parameter name="Environment" value="TEST" />
-  </TestRunParameters>
 </RunSettings>
