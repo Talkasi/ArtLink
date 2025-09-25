@@ -6,6 +6,9 @@ tmp/
 app/**/*.js
 app/**/*.js.map
 
+*allure-report*
+*TestResults*
+
 # dependencies
 node_modules/
 bower_components/

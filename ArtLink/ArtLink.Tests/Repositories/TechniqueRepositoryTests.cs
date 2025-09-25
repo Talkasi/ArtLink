@@ -1,12 +1,17 @@
-﻿using ArtLink.DataAccess.Context;
+﻿using Allure.Xunit.Attributes;
+using ArtLink.DataAccess.Context;
 using ArtLink.DataAccess.Models;
 using ArtLink.DataAccess.Repositories;
+using ArtLink.Domain.Models;
+using ArtLink.Tests.Fixtures;
+using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging.Abstractions;
 
 namespace ArtLink.Tests.Repositories;
 
-public class TechniqueRepositoryTests
+[AllureSuite("Technique Repository Tests")]
+public class TechniqueRepositoryTests(TechniqueFixture fixture) : IClassFixture<TechniqueFixture>
 {
     private static ArtLinkDbContext CreateContext()
     {
@@ -22,62 +27,165 @@ public class TechniqueRepositoryTests
     }
 
     [Fact]
+    [AllureFeature("AddAsync")]
+    [AllureStory("Positive case - add technique")]
+    [AllureDescription("Проверка добавления техники в репозиторий")]
     public async Task AddAsync_ShouldAddTechnique()
     {
         await using var context = CreateContext();
-        var repository = CreateRepository(context);
+        var repo = CreateRepository(context);
 
-        await repository.AddAsync("Oil Painting", "Thick layered paint");
+        var technique = fixture.CreateTechnique(
+            name: "Oil Painting", 
+            description: "Thick layered paint");
 
-        var technique = await context.Techniques.FirstOrDefaultAsync();
-        Assert.NotNull(technique);
-        Assert.Equal("Oil Painting", technique.Name);
+        var id = await repo.AddAsync(technique.Name, technique.Description);
+
+        var added = await context.Techniques.FindAsync(id);
+        added.Should().NotBeNull();
+        added.Name.Should().Be("Oil Painting");
+        added.Description.Should().Be("Thick layered paint");
     }
 
     [Fact]
-    public async Task GetAllAsync_ShouldReturnAll()
+    [AllureFeature("GetAllAsync")]
+    [AllureStory("Positive case - get all techniques")]
+    [AllureDescription("Проверка получения всех техник из репозитория")]
+    public async Task GetAllAsync_ShouldReturnAllTechniques()
     {
         await using var context = CreateContext();
-        context.Techniques.AddRange(
-            new TechniqueDb(Guid.NewGuid(), "Watercolor", "Light pigment"),
-            new TechniqueDb(Guid.NewGuid(), "Sketch", "Simple pencil")
-        );
+        
+        var techniques = new List<Technique>
+        {
+            fixture.CreateTechnique(name: "Watercolor", description: "Light pigment"),
+            fixture.CreateTechnique(name: "Sketch", description: "Simple pencil")
+        };
+
+        await context.Techniques.AddRangeAsync(techniques.Select(t => 
+            new TechniqueDb(t.Id, t.Name, t.Description)));
         await context.SaveChangesAsync();
 
-        var repository = CreateRepository(context);
-        var results = (await repository.GetAllAsync()).ToList();
+        var repo = CreateRepository(context);
+        var results = (await repo.GetAllAsync()).ToList();
 
-        Assert.Equal(2, results.Count);
+        results.Should().HaveCount(2);
+        results.Should().Contain(t => t.Name == "Watercolor");
+        results.Should().Contain(t => t.Name == "Sketch");
     }
 
     [Fact]
+    [AllureFeature("UpdateAsync")]
+    [AllureStory("Positive case - update technique")]
+    [AllureDescription("Проверка обновления техники в репозитории")]
     public async Task UpdateAsync_ShouldModifyTechnique()
     {
         await using var context = CreateContext();
-        var id = Guid.NewGuid();
-        context.Techniques.Add(new TechniqueDb(id, "Old", "Old Desc"));
+        
+        var technique = fixture.CreateTechnique(name: "Old", description: "Old Desc");
+        await context.Techniques.AddAsync(new TechniqueDb(technique.Id, technique.Name, technique.Description));
         await context.SaveChangesAsync();
 
-        var repository = CreateRepository(context);
-        await repository.UpdateAsync(id, "New", "New Desc");
+        var repo = CreateRepository(context);
+        await repo.UpdateAsync(technique.Id, "New", "New Desc");
 
-        var updated = await context.Techniques.FindAsync(id);
-        Assert.Equal("New", updated!.Name);
+        var updated = await context.Techniques.FindAsync(technique.Id);
+        updated.Should().NotBeNull();
+        updated.Name.Should().Be("New");
+        updated.Description.Should().Be("New Desc");
     }
 
     [Fact]
+    [AllureFeature("DeleteAsync")]
+    [AllureStory("Positive case - delete technique")]
+    [AllureDescription("Проверка удаления техники из репозитория")]
     public async Task DeleteAsync_ShouldRemoveTechnique()
     {
         await using var context = CreateContext();
-        var id = Guid.NewGuid();
-        context.Techniques.Add(new TechniqueDb(id, "ToDelete", "Desc"));
+        
+        var technique = fixture.CreateTechnique(name: "ToDelete", description: "Desc");
+        await context.Techniques.AddAsync(new TechniqueDb(technique.Id, technique.Name, technique.Description));
         await context.SaveChangesAsync();
 
-        var repository = CreateRepository(context);
-        await repository.DeleteAsync(id);
+        var repo = CreateRepository(context);
+        await repo.DeleteAsync(technique.Id);
 
-        var deleted = await context.Techniques.FindAsync(id);
-        Assert.Null(deleted);
+        var deleted = await context.Techniques.FindAsync(technique.Id);
+        deleted.Should().BeNull();
+    }
+
+    [Fact]
+    [AllureFeature("GetByIdAsync")]
+    [AllureStory("Positive case - get technique by id")]
+    [AllureDescription("Проверка получения техники по идентификатору")]
+    public async Task GetByIdAsync_ShouldReturnTechnique()
+    {
+        await using var context = CreateContext();
+        
+        var technique = fixture.CreateTechnique(name: "Digital Art", description: "Computer-generated art");
+        await context.Techniques.AddAsync(new TechniqueDb(technique.Id, technique.Name, technique.Description));
+        await context.SaveChangesAsync();
+
+        var repo = CreateRepository(context);
+        var result = (await repo.GetAllAsync()).Last();
+
+        result.Should().NotBeNull();
+        result.Name.Should().Be("Digital Art");
+        result.Description.Should().Be("Computer-generated art");
+    }
+
+    [Fact]
+    [AllureFeature("GetByIdAsync")]
+    [AllureStory("Negative case - non-existent technique")]
+    [AllureDescription("Проверка возврата null для несуществующей техники")]
+    public async Task GetByIdAsync_NonExistent_ShouldReturnNull()
+    {
+        await using var context = CreateContext();
+        var repo = CreateRepository(context);
+
+        var result = await repo.GetAllAsync();
+
+        result.Should().BeEmpty();
+    }
+
+    [Fact]
+    [AllureFeature("UpdateAsync")]
+    [AllureStory("Exception handling - update non-existent technique")]
+    [AllureDescription("Проверка обработки обновления несуществующей техники")]
+    public async Task UpdateAsync_NonExistent_ShouldNotThrow()
+    {
+        await using var context = CreateContext();
+        var repo = CreateRepository(context);
+
+        Func<Task> act = async () => await repo.UpdateAsync(Guid.NewGuid(), "Name", "Description");
+
+        await act.Should().NotThrowAsync();
+    }
+
+    [Fact]
+    [AllureFeature("DeleteAsync")]
+    [AllureStory("Exception handling - delete non-existent technique")]
+    [AllureDescription("Проверка обработки удаления несуществующей техники")]
+    public async Task DeleteAsync_NonExistent_ShouldNotThrow()
+    {
+        await using var context = CreateContext();
+        var repo = CreateRepository(context);
+
+        Func<Task> act = async () => await repo.DeleteAsync(Guid.NewGuid());
+
+        await act.Should().NotThrowAsync();
+    }
+
+    [Fact]
+    [AllureFeature("GetAllAsync")]
+    [AllureStory("Edge case - empty repository")]
+    [AllureDescription("Проверка получения пустого списка техник")]
+    public async Task GetAllAsync_EmptyRepository_ShouldReturnEmptyList()
+    {
+        await using var context = CreateContext();
+        var repo = CreateRepository(context);
+
+        var results = await repo.GetAllAsync();
+
+        results.Should().BeEmpty();
     }
 }
-
