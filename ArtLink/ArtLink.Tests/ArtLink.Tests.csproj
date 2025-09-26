@@ -8,6 +8,7 @@
         <IsPackable>false</IsPackable>
         <IsTestProject>true</IsTestProject>
         <NoWarn>$(NoWarn);CS1668</NoWarn>
+        <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     </PropertyGroup>
 
     <ItemGroup>
@@ -19,6 +20,10 @@
         <PackageReference Include="Microsoft.Data.Sqlite" Version="9.0.9" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="9.0.4" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="9.0.9" />
+        <PackageReference Include="Microsoft.Extensions.Configuration" Version="9.0.9" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="9.0.9" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="9.0.9" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.9" />
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
         <PackageReference Include="Moq" Version="4.20.72" />
         <PackageReference Include="Testcontainers.PostgreSql" Version="4.7.0" />
@@ -44,8 +49,25 @@
 
     <ItemGroup>
       <Folder Include="E2ETests\" />
-      <Folder Include="IntegrationTests\" />
       <Folder Include="UnitTests\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Update="appsettings.Test.json">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Update="Common\Database\schemas\reset.sql">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="Common\Database\schemas\create.sql">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="Common\Database\schemas\init_data.sql">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
     </ItemGroup>
 
 </Project>

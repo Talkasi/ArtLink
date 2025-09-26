@@ -1,7 +1,7 @@
 ﻿using ArtLink.Domain.Models;
 using AutoFixture;
 
-namespace ArtLink.Tests.Fixtures;
+namespace ArtLink.Tests.Common.Fixtures;
 
 public class EmployerFixture
 {

@@ -1,60 +1,56 @@
-﻿using System.Data.Common;
-using Dapper;
-using Npgsql;
-using Testcontainers.PostgreSql;
+﻿using Microsoft.Extensions.Configuration;
 
 namespace ArtLink.Tests.Common.Database;
 
-public abstract class DatabaseFixture : IAsyncLifetime
+public class DatabaseFixture : IAsyncLifetime
 {
-    private readonly PostgreSqlContainer _postgresContainer;
-    public DbConnection Connection { get; private set; } = null!;
+    private readonly string _connectionString;
+    private readonly string _scriptsPath;
+
+    public string ConnectionString => _connectionString;
 
     public DatabaseFixture()
     {
-        _postgresContainer = new PostgreSqlBuilder()
-            .WithDatabase("artlink_test")
-            .WithUsername("test_user")
-            .WithPassword("test_password")
+        var config = new ConfigurationBuilder()
+            .SetBasePath(Directory.GetCurrentDirectory())
+            .AddJsonFile("appsettings.Test.json", optional: false, reloadOnChange: false)
+            .AddEnvironmentVariables()
             .Build();
+
+        _connectionString = config.GetConnectionString("TestDatabase")
+                            ?? throw new InvalidOperationException("Connection string 'TestDatabase' not found in appsettings.Test.json");
+
+        _scriptsPath = Path.Combine(Directory.GetCurrentDirectory(), "Common", "Database", "schemas");
     }
 
     public async Task InitializeAsync()
     {
-        await _postgresContainer.StartAsync();
-
-        Connection = new NpgsqlConnection(_postgresContainer.GetConnectionString());
-        await Connection.OpenAsync();
-
-        var schemaSql = await File.ReadAllTextAsync("schemas/create.sql");
-        await Connection.ExecuteAsync(schemaSql);
-
-        if (File.Exists("schemas/testdata.sql"))
-        {
-            var testDataSql = await File.ReadAllTextAsync("schemas/testdata.sql");
-            await Connection.ExecuteAsync(testDataSql);
-        }
-    }
-
-    public async Task ResetDatabaseAsync()
-    {
-        var schemaSql = await File.ReadAllTextAsync("schemas/create.sql");
-        await Connection.ExecuteAsync("DROP SCHEMA public CASCADE; CREATE SCHEMA public;");
-        await Connection.ExecuteAsync(schemaSql);
-
-        if (File.Exists("schemas/testdata.sql"))
-        {
-            var testDataSql = await File.ReadAllTextAsync("schemas/testdata.sql");
-            await Connection.ExecuteAsync(testDataSql);
-        }
+        await ResetDatabaseAsync();
     }
 
     public async Task DisposeAsync()
     {
-        await Connection.DisposeAsync();
-        await _postgresContainer.DisposeAsync();
+        await ResetDatabaseAsync();
+    }
+
+    private async Task ApplyScriptAsync(string scriptFile)
+    {
+        var fullPath = Path.Combine(_scriptsPath, scriptFile);
+        if (!File.Exists(fullPath))
+            throw new FileNotFoundException($"Script not found: {fullPath}");
+
+        var sql = await File.ReadAllTextAsync(fullPath);
+
+        await using var conn = new Npgsql.NpgsqlConnection(_connectionString);
+        await conn.OpenAsync();
+        await using var cmd = new Npgsql.NpgsqlCommand(sql, conn);
+        await cmd.ExecuteNonQueryAsync();
+    }
+
+    public async Task ResetDatabaseAsync()
+    {
+        await ApplyScriptAsync("reset.sql");
+        await ApplyScriptAsync("create.sql");
+        await ApplyScriptAsync("init_data.sql");
     }
 }
-
-[CollectionDefinition("Database collection")]
-public class DatabaseCollection : ICollectionFixture<DatabaseFixture> { }

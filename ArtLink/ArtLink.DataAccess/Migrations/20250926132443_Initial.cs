@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ArtLink.DataAccess.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class Initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -68,17 +68,11 @@ namespace ArtLink.DataAccess.Migrations
                     ProjectDescription = table.Column<string>(type: "character varying(2000)", maxLength: 2000, nullable: false),
                     StartDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     EndDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    Status = table.Column<int>(type: "integer", maxLength: 50, nullable: false),
-                    ArtistDbId = table.Column<Guid>(type: "uuid", nullable: true)
+                    Status = table.Column<int>(type: "integer", maxLength: 50, nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Contracts", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Contracts_Artists_ArtistDbId",
-                        column: x => x.ArtistDbId,
-                        principalTable: "Artists",
-                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Contracts_Artists_ArtistId",
                         column: x => x.ArtistId,
@@ -145,11 +139,6 @@ namespace ArtLink.DataAccess.Migrations
                 name: "IX_Artworks_PortfolioId",
                 table: "Artworks",
                 column: "PortfolioId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Contracts_ArtistDbId",
-                table: "Contracts",
-                column: "ArtistDbId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Contracts_ArtistId",

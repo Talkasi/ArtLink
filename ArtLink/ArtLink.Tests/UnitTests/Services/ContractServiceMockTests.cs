@@ -2,7 +2,7 @@
 using ArtLink.Domain.Models;
 using ArtLink.Domain.Models.Enums;
 using ArtLink.Services.Contract;
-using ArtLink.Tests.Fixtures;
+using ArtLink.Tests.Common.Fixtures;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;

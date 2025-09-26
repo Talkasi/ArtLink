@@ -12,7 +12,8 @@ echo Building project...
 dotnet build --no-restore
 
 echo Running tests...
-dotnet test --no-build --verbosity normal --logger trx --settings:.runsettings --results-directory Common/TestResults
+set ALLURE_RESULTS_DIRECTORY=Common\TestResults\allure-results
+dotnet test --no-build --verbosity n --settings:.runsettings --results-directory Common/TestResults
 
 if %ERRORLEVEL% NEQ 0 (
     echo Some tests failed!

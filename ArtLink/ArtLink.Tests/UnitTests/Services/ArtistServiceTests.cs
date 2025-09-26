@@ -2,7 +2,7 @@ using Allure.Xunit.Attributes;
 using ArtLink.DataAccess.Context;
 using ArtLink.DataAccess.Repositories;
 using ArtLink.Services.Artist;
-using ArtLink.Tests.Fixtures;
+using ArtLink.Tests.Common.Fixtures;
 using FluentAssertions;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;

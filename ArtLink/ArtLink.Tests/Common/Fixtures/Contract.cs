@@ -2,7 +2,7 @@
 using ArtLink.Domain.Models.Enums;
 using AutoFixture;
 
-namespace ArtLink.Tests.Fixtures;
+namespace ArtLink.Tests.Common.Fixtures;
 
 public class ContractFixture
 {

@@ -2,7 +2,7 @@
 using ArtLink.Domain.Interfaces.Repositories;
 using ArtLink.Domain.Models;
 using ArtLink.Services.Artwork;
-using ArtLink.Tests.Fixtures;
+using ArtLink.Tests.Common.Fixtures;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;

@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace ArtLink.DataAccess.Migrations
 {
     [DbContext(typeof(ArtLinkDbContext))]
-    [Migration("20250412123118_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20250926132443_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -103,9 +103,6 @@ namespace ArtLink.DataAccess.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid?>("ArtistDbId")
-                        .HasColumnType("uuid");
-
                     b.Property<Guid>("ArtistId")
                         .HasColumnType("uuid");
 
@@ -128,8 +125,6 @@ namespace ArtLink.DataAccess.Migrations
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ArtistDbId");
 
                     b.HasIndex("ArtistId");
 
@@ -239,12 +234,8 @@ namespace ArtLink.DataAccess.Migrations
 
             modelBuilder.Entity("ArtLink.DataAccess.Models.ContractDb", b =>
                 {
-                    b.HasOne("ArtLink.DataAccess.Models.ArtistDb", null)
-                        .WithMany("Contracts")
-                        .HasForeignKey("ArtistDbId");
-
                     b.HasOne("ArtLink.DataAccess.Models.ArtistDb", "Artist")
-                        .WithMany()
+                        .WithMany("Contracts")
                         .HasForeignKey("ArtistId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();

@@ -1,7 +1,7 @@
 using Allure.Xunit.Attributes;
 using ArtLink.DataAccess.Context;
 using ArtLink.DataAccess.Repositories;
-using ArtLink.Tests.Fixtures;
+using ArtLink.Tests.Common.Fixtures;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging.Abstractions;

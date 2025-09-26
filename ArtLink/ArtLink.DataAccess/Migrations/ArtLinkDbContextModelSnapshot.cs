@@ -100,9 +100,6 @@ namespace ArtLink.DataAccess.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid?>("ArtistDbId")
-                        .HasColumnType("uuid");
-
                     b.Property<Guid>("ArtistId")
                         .HasColumnType("uuid");
 
@@ -125,8 +122,6 @@ namespace ArtLink.DataAccess.Migrations
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ArtistDbId");
 
                     b.HasIndex("ArtistId");
 
@@ -236,12 +231,8 @@ namespace ArtLink.DataAccess.Migrations
 
             modelBuilder.Entity("ArtLink.DataAccess.Models.ContractDb", b =>
                 {
-                    b.HasOne("ArtLink.DataAccess.Models.ArtistDb", null)
-                        .WithMany("Contracts")
-                        .HasForeignKey("ArtistDbId");
-
                     b.HasOne("ArtLink.DataAccess.Models.ArtistDb", "Artist")
-                        .WithMany()
+                        .WithMany("Contracts")
                         .HasForeignKey("ArtistId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
