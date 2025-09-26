@@ -30,8 +30,8 @@ public class ContractFixture
             .With(c => c.Id, id ?? Guid.NewGuid())
             .With(c => c.ArtistId, artistId ?? Guid.NewGuid())
             .With(c => c.EmployerId, employerId ?? Guid.NewGuid())
-            .With(c => c.StartDate, startDate ?? DateTime.Today)
-            .With(c => c.EndDate, endDate ?? DateTime.Today.AddDays(7))
+            .With(c => c.StartDate, startDate ?? DateTime.Today.ToUniversalTime())
+            .With(c => c.EndDate, endDate ?? DateTime.Today.AddDays(7).ToUniversalTime())
             .With(c => c.Status, state ?? ContractState.Draft)
             .With(c => c.ProjectDescription, description ?? "interesting")
             .Create();

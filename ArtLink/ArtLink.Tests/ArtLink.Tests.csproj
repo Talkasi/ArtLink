@@ -48,7 +48,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="E2ETests\" />
       <Folder Include="UnitTests\" />
     </ItemGroup>
 
