@@ -13,6 +13,6 @@ jobs:
     - name: Run Docker tests
       run: |
         cd ArtLink/ArtLink.Tests
-        docker-compose down
-        docker-compose build
-        docker-compose up --exit-code-from tests
+        docker compose down
+        docker compose build
+        docker compose up --exit-code-from tests
