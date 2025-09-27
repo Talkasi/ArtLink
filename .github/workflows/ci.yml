@@ -1,6 +1,6 @@
-name: CI/CD Tests
+name: Run Tests on Push
 
-on: [push, pull_request]
+on: [push]
 
 jobs:
   run-tests:
@@ -10,16 +10,9 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Run tests
+    - name: Run Docker tests
       run: |
         cd ArtLink/ArtLink.Tests
         docker-compose down
         docker-compose build
         docker-compose up --exit-code-from tests
-
-    - name: Upload test results
-      uses: actions/upload-artifact@v3
-      with:
-        name: test-results
-        path: ArtLink/ArtLink.Tests/TestResults/*.trx
-      if: always()
