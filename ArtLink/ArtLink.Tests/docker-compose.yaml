@@ -22,10 +22,19 @@
       - test-network
     environment:
       ConnectionStrings__TestDatabase: "Host=db;Port=5432;Database=artlink_test;Username=postgres;Password=postgres"
-    volumes:
-      - .:/src
-    working_dir: /src
-    command: ["dotnet", "test", "ArtLink.Tests.csproj", "--no-build", "--logger:trx", "-v", "n"]
+    # volumes:
+    #  - .:/src
+    working_dir: /src/ArtLink.Tests
+    command:
+      - sh
+      - -c
+      - |
+        echo "Waiting for database..."
+        sleep 15
+        echo "Running tests..."
+        pwd
+        ls -la .
+        dotnet test ArtLink.Tests.csproj --logger trx
 
 volumes:
   pgdata:
