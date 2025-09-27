@@ -1,0 +1,25 @@
+name: CI/CD Tests
+
+on: [push, pull_request]
+
+jobs:
+  run-tests:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Run tests
+      run: |
+        cd ArtLink/ArtLink.Tests
+        docker-compose down
+        docker-compose build
+        docker-compose up --exit-code-from tests
+
+    - name: Upload test results
+      uses: actions/upload-artifact@v3
+      with:
+        name: test-results
+        path: ArtLink/ArtLink.Tests/TestResults/*.trx
+      if: always()

@@ -1,6 +1,4 @@
-﻿version: "3.9"
-
-services:
+﻿services:
   db:
     image: postgres:15
     environment:
@@ -11,6 +9,27 @@ services:
       - "5433:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
+    networks:
+      - test-network
+
+  tests:
+    build:
+      context: ..
+      dockerfile: ArtLink.Tests/Dockerfile
+    depends_on:
+      - db
+    networks:
+      - test-network
+    environment:
+      ConnectionStrings__TestDatabase: "Host=db;Port=5432;Database=artlink_test;Username=postgres;Password=postgres"
+    volumes:
+      - .:/src
+    working_dir: /src
+    command: ["dotnet", "test", "ArtLink.Tests.csproj", "--no-build", "--logger:trx", "-v", "n"]
 
 volumes:
   pgdata:
+    
+networks:
+  test-network:
+    driver: bridge

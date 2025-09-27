@@ -11,15 +11,39 @@ public class DatabaseFixture : IAsyncLifetime
 
     public DatabaseFixture()
     {
-        var config = new ConfigurationBuilder()
-            .SetBasePath(Directory.GetCurrentDirectory())
-            .AddJsonFile("appsettings.Test.json", optional: false, reloadOnChange: false)
-            .AddEnvironmentVariables()
-            .Build();
+        var all = Environment.GetEnvironmentVariables();
 
-        _connectionString = config.GetConnectionString("TestDatabase")
-                            ?? throw new InvalidOperationException("Connection string 'TestDatabase' not found in appsettings.Test.json");
+        foreach (var key in all.Keys)
+        {
+            Console.WriteLine($"{key}: {(string)all[key]!}");
+        }
+        
+        var tmpConnection = Environment.GetEnvironmentVariable("ConnectionStrings__TestDatabase");
+        Console.WriteLine($"=== DEBUG ===");
+        Console.WriteLine($"Environment variable: {tmpConnection}");
+        Console.WriteLine($"Current directory: {Directory.GetCurrentDirectory()}");
+    
+        if (string.IsNullOrEmpty(tmpConnection))
+        {
+            Console.WriteLine("Using appsettings.Test.json");
+            var config = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.Test.json", optional: false, reloadOnChange: false)
+                .AddEnvironmentVariables()
+                .Build();
 
+            _connectionString = config.GetConnectionString("TestDatabase")
+                                ?? throw new InvalidOperationException("Connection string 'TestDatabase' not found in appsettings.Test.json");
+        }
+        else
+        {
+            Console.WriteLine("Using environment variable");
+            _connectionString = tmpConnection;
+        }
+    
+        Console.WriteLine($"Final connection string: {_connectionString}");
+        Console.WriteLine($"=== END DEBUG ===");
+        
         _scriptsPath = Path.Combine(Directory.GetCurrentDirectory(), "Common", "Database", "schemas");
     }
 
