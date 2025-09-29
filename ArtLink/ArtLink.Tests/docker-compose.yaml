@@ -23,15 +23,6 @@ services:
     environment:
       DB_CONNECTION_STRING: "Host=db;Port=5432;Database=artlink_test;Username=postgres;Password=postgres"
     working_dir: /src/ArtLink.Tests
-    command:
-      - sh
-      - -c
-      - |
-        echo "Waiting for database..."
-        sleep 15
-        echo "Running tests..."
-        pwd
-        dotnet test ArtLink.Tests.csproj --logger trx -v n
 
 networks:
   test-network:
