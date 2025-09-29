@@ -2,6 +2,7 @@
 using ArtLink.Domain.Models;
 using ArtLink.Domain.Models.Enums;
 using ArtLink.Services.Contract;
+using ArtLink.Tests.Common;
 using ArtLink.Tests.Common.Fixtures;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
@@ -9,6 +10,7 @@ using Moq;
 
 namespace ArtLink.Tests.UnitTests.Services;
 
+[Trait("Category", TestCategories.Unit)]
 public class ContractServiceUnitTests : IClassFixture<ContractFixture>
 {
     private readonly Mock<IContractRepository> _mockRepo;

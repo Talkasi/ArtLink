@@ -1,5 +1,6 @@
 ﻿using ArtLink.DataAccess.Context;
 using ArtLink.DataAccess.Repositories;
+using ArtLink.Tests.Common;
 using ArtLink.Tests.Common.Database;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
@@ -8,6 +9,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 namespace ArtLink.Tests.IntegrationTests.Repositories;
 
 [Collection("Database collection")]
+[Trait("Category", TestCategories.Integration)]
 public class PortfolioRepositoryIt(DatabaseFixture db) : IClassFixture<DatabaseFixture>
 {
     private PortfolioRepository CreateRepository()

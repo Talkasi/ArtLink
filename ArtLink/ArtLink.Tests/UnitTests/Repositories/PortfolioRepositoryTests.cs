@@ -3,6 +3,7 @@ using ArtLink.DataAccess.Context;
 using ArtLink.DataAccess.Models;
 using ArtLink.DataAccess.Repositories;
 using ArtLink.Domain.Models;
+using ArtLink.Tests.Common;
 using ArtLink.Tests.Common.Fixtures;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
@@ -11,6 +12,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 namespace ArtLink.Tests.UnitTests.Repositories;
 
 [AllureSuite("Portfolio Repository Tests")]
+[Trait("Category", TestCategories.Unit)]
 public class PortfolioRepositoryUnitTests(PortfolioFixture fixture) : IClassFixture<PortfolioFixture>
 {
     private static ArtLinkDbContext CreateContext()

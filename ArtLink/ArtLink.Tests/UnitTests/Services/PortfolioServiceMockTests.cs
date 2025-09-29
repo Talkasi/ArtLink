@@ -2,6 +2,7 @@
 using ArtLink.Domain.Interfaces.Repositories;
 using ArtLink.Domain.Models;
 using ArtLink.Services.Portfolio;
+using ArtLink.Tests.Common;
 using ArtLink.Tests.Common.Fixtures;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
@@ -11,6 +12,7 @@ namespace ArtLink.Tests.UnitTests.Services;
 
 [AllureSuite("Portfolio Service Tests")]
 [AllureSubSuite("London Style (with Mocks)")]
+[Trait("Category", TestCategories.Unit)]
 public class PortfolioServiceMockUnitTests : IClassFixture<PortfolioFixture>
 {
     private readonly Mock<IPortfolioRepository> _portfolioRepositoryMock;

@@ -1,6 +1,7 @@
 ﻿using ArtLink.DataAccess.Context;
 using ArtLink.DataAccess.Repositories;
 using ArtLink.Services.Artist;
+using ArtLink.Tests.Common;
 using ArtLink.Tests.Common.Database;
 using ArtLink.Tests.Common.Fixtures;
 using FluentAssertions;
@@ -10,6 +11,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 namespace ArtLink.Tests.IntegrationTests.Services;
 
 [Collection("Database collection")]
+[Trait("Category", TestCategories.Integration)]
 public class ArtistServiceIt(DatabaseFixture db) : IClassFixture<DatabaseFixture>
 {
     private readonly ArtistFixture _artistFixture = new ArtistFixture();

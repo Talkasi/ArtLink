@@ -21,9 +21,7 @@
     networks:
       - test-network
     environment:
-      ConnectionStrings__TestDatabase: "Host=db;Port=5432;Database=artlink_test;Username=postgres;Password=postgres"
-    # volumes:
-    #  - .:/src
+      DB_CONNECTION_STRING: "Host=db;Port=5432;Database=artlink_test;Username=postgres;Password=postgres"
     working_dir: /src/ArtLink.Tests
     command:
       - sh
@@ -33,8 +31,7 @@
         sleep 15
         echo "Running tests..."
         pwd
-        ls -la .
-        dotnet test ArtLink.Tests.csproj --logger trx
+        dotnet test ArtLink.Tests.csproj --logger trx -v n
 
 volumes:
   pgdata:

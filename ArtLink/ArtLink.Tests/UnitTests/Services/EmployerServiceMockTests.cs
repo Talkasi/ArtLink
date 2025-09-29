@@ -2,6 +2,7 @@
 using ArtLink.Domain.Interfaces.Repositories;
 using ArtLink.Domain.Models;
 using ArtLink.Services.Employer;
+using ArtLink.Tests.Common;
 using ArtLink.Tests.Common.Fixtures;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
@@ -11,6 +12,7 @@ namespace ArtLink.Tests.UnitTests.Services;
 
 [AllureSuite("Employer Service Tests")]
 [AllureSubSuite("London Style (with Mocks)")]
+[Trait("Category", TestCategories.Unit)]
 public class EmployerServiceMockUnitTests : IClassFixture<EmployerFixture>
 {
     private readonly Mock<IEmployerRepository> _repoMock;

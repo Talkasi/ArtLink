@@ -3,6 +3,7 @@ using ArtLink.DataAccess.Repositories;
 using ArtLink.Domain.Models.Enums;
 using ArtLink.Services.Artwork;
 using ArtLink.Services.Contract;
+using ArtLink.Tests.Common;
 using ArtLink.Tests.Common.Database;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
@@ -11,6 +12,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 namespace ArtLink.Tests.IntegrationTests.Services;
 
 [Collection("Database collection")]
+[Trait("Category", TestCategories.Integration)]
 public class ContractServiceIt(DatabaseFixture db) : IClassFixture<DatabaseFixture>
 {
     private ContractService CreateService()

@@ -1,5 +1,6 @@
 ﻿using ArtLink.DataAccess.Context;
 using ArtLink.DataAccess.Repositories;
+using ArtLink.Tests.Common;
 using ArtLink.Tests.Common.Database;
 using ArtLink.Tests.Common.Fixtures;
 using FluentAssertions;
@@ -9,6 +10,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 namespace ArtLink.Tests.IntegrationTests.Repositories;
 
 [Collection("Database collection")]
+[Trait("Category", TestCategories.Integration)]
 public class ArtistRepositoryIt(DatabaseFixture db, ArtistFixture artistFixture) : IClassFixture<DatabaseFixture>, IClassFixture<ArtistFixture>
 {
     private ArtistRepository CreateRepository()

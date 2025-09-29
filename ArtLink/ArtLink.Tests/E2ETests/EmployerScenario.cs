@@ -3,6 +3,7 @@ using ArtLink.Services.Contract;
 using ArtLink.Services.Artist;
 using ArtLink.Services.Portfolio;
 using ArtLink.Services.Technique;
+using ArtLink.Tests.Common;
 using ArtLink.Tests.Common.Database;
 using ArtLink.Tests.Common.Fixtures;
 using FluentAssertions;
@@ -12,6 +13,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 namespace ArtLink.Tests.E2ETests;
 
 [Collection("Database collection")]
+[Trait("Category", TestCategories.E2E)]
 public class EmployerScenarioE2ETest(DatabaseFixture db)
 {
     private readonly EmployerFixture _employerFixture = new EmployerFixture();

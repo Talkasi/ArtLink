@@ -1,6 +1,7 @@
 ﻿using ArtLink.DataAccess.Context;
 using ArtLink.DataAccess.Repositories;
 using ArtLink.Domain.Models.Enums;
+using ArtLink.Tests.Common;
 using ArtLink.Tests.Common.Database;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
@@ -9,6 +10,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 namespace ArtLink.Tests.IntegrationTests.Repositories;
 
 [Collection("Database collection")]
+[Trait("Category", TestCategories.Integration)]
 public class ContractRepositoryIt(DatabaseFixture db) : IClassFixture<DatabaseFixture>
 {
     private ContractRepository CreateRepository()

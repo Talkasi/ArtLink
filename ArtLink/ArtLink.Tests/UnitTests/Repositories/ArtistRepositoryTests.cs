@@ -1,6 +1,7 @@
 using Allure.Xunit.Attributes;
 using ArtLink.DataAccess.Context;
 using ArtLink.DataAccess.Repositories;
+using ArtLink.Tests.Common;
 using ArtLink.Tests.Common.Fixtures;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
@@ -9,6 +10,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 namespace ArtLink.Tests.UnitTests.Repositories;
 
 [AllureSuite("Artist Repository Tests")]
+[Trait("Category", TestCategories.Unit)]
 public class ArtistRepositoryUnitTests(ArtistFixture fixture) : IClassFixture<ArtistFixture>
 {
     private static ArtistRepository GetInMemoryRepository()

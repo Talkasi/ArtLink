@@ -2,7 +2,6 @@
 
 WORKDIR /src
 
-# Копируем только csproj для кэширования
 COPY ArtLink.Tests/ArtLink.Tests.csproj ArtLink.Tests/
 COPY ArtLink.DataAccess/ArtLink.DataAccess.csproj ArtLink.DataAccess/
 COPY ArtLink.Domain/ArtLink.Domain.csproj ArtLink.Domain/
@@ -14,17 +13,15 @@ COPY Services/ArtLink.Services.Portfolio/ArtLink.Services.Portfolio.csproj Servi
 COPY Services/ArtLink.Services.Search/ArtLink.Services.Search.csproj Services/ArtLink.Services.Search/
 COPY Services/ArtLink.Services.Technique/ArtLink.Services.Technique.csproj Services/ArtLink.Services.Technique/
 
-# Восстанавливаем зависимости
 RUN dotnet restore ArtLink.Tests/ArtLink.Tests.csproj
 
-# Копируем весь код
 COPY . .
 
-# Собираем проект
+RUN echo "=== Files in /src ==="
+RUN ls -la /src/
+RUN echo "=== Files in ArtLink.Tests ==="
+RUN ls -la /src/ArtLink.Tests/
+
 RUN dotnet build ArtLink.Tests/ArtLink.Tests.csproj -c Release --no-restore
 
-# Устанавливаем рабочую директорию для тестов
 WORKDIR /src/ArtLink.Tests
-
-# Запускаем тесты при старте контейнера
-CMD ["dotnet", "test", "--no-build", "--logger:trx"]

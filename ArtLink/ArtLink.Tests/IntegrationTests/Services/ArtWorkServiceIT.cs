@@ -2,6 +2,7 @@
 using ArtLink.DataAccess.Models;
 using ArtLink.DataAccess.Repositories;
 using ArtLink.Services.Artwork;
+using ArtLink.Tests.Common;
 using ArtLink.Tests.Common.Database;
 using ArtLink.Tests.Common.Fixtures;
 using FluentAssertions;
@@ -11,6 +12,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 namespace ArtLink.Tests.IntegrationTests.Services;
 
 [Collection("Database collection")]
+[Trait("Category", TestCategories.Integration)]
 public class ArtworkServiceIt(DatabaseFixture db) : IClassFixture<DatabaseFixture>
 {
     private readonly ArtworkFixture _artworkFixture = new ArtworkFixture();

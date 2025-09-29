@@ -11,21 +11,10 @@ public class DatabaseFixture : IAsyncLifetime
 
     public DatabaseFixture()
     {
-        var all = Environment.GetEnvironmentVariables();
-
-        foreach (var key in all.Keys)
-        {
-            Console.WriteLine($"{key}: {(string)all[key]!}");
-        }
+        var tmpConnectionString = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING");
         
-        var tmpConnection = Environment.GetEnvironmentVariable("ConnectionStrings__TestDatabase");
-        Console.WriteLine($"=== DEBUG ===");
-        Console.WriteLine($"Environment variable: {tmpConnection}");
-        Console.WriteLine($"Current directory: {Directory.GetCurrentDirectory()}");
-    
-        if (string.IsNullOrEmpty(tmpConnection))
+        if (string.IsNullOrEmpty(tmpConnectionString))
         {
-            Console.WriteLine("Using appsettings.Test.json");
             var config = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.Test.json", optional: false, reloadOnChange: false)
@@ -37,12 +26,8 @@ public class DatabaseFixture : IAsyncLifetime
         }
         else
         {
-            Console.WriteLine("Using environment variable");
-            _connectionString = tmpConnection;
+            _connectionString = tmpConnectionString;
         }
-    
-        Console.WriteLine($"Final connection string: {_connectionString}");
-        Console.WriteLine($"=== END DEBUG ===");
         
         _scriptsPath = Path.Combine(Directory.GetCurrentDirectory(), "Common", "Database", "schemas");
     }

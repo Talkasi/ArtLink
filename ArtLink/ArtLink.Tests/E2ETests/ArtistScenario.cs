@@ -3,6 +3,7 @@ using ArtLink.Services.Artist;
 using ArtLink.Services.Artwork;
 using ArtLink.Services.Portfolio;
 using ArtLink.Services.Technique;
+using ArtLink.Tests.Common;
 using ArtLink.Tests.Common.Database;
 using ArtLink.Tests.Common.Fixtures;
 using FluentAssertions;
@@ -17,6 +18,7 @@ public class DatabaseCollection : ICollectionFixture<DatabaseFixture>
 }
 
 [Collection("Database collection")]
+[Trait("Category", TestCategories.E2E)]
 public class ArtistScenarioE2ETest(DatabaseFixture db)
 {
     private readonly ArtistFixture _artistFixture = new ArtistFixture();

@@ -2,6 +2,7 @@ using Allure.Xunit.Attributes;
 using ArtLink.DataAccess.Context;
 using ArtLink.DataAccess.Repositories;
 using ArtLink.Services.Artist;
+using ArtLink.Tests.Common;
 using ArtLink.Tests.Common.Fixtures;
 using FluentAssertions;
 using Microsoft.Data.Sqlite;
@@ -12,6 +13,7 @@ namespace ArtLink.Tests.UnitTests.Services;
 
 [AllureSuite("Artist Service Tests")]
 [AllureSubSuite("Classical Style (SQLite InMemory)")]
+[Trait("Category", TestCategories.Unit)]
 public class ArtistServiceUnitTests : IDisposable, IClassFixture<ArtistFixture>
 {
     private readonly SqliteConnection _connection;
