@@ -26,17 +26,13 @@ dotnet test --filter "Category=Unit" --logger "trx;LogFileName=unit-tests.trx" -
 exit $?' > /run-unit-tests.sh && chmod +x /run-unit-tests.sh
 
 RUN echo '#!/bin/bash\n\
-echo "Waiting for database..."\n\
-sleep 10\n\
 echo "Running Integration Tests..."\n\
 dotnet test --filter "Category=Integration" --logger "trx;LogFileName=integration-tests.trx" --results-directory /test-results\n\
 exit $?' > /run-integration-tests.sh && chmod +x /run-integration-tests.sh
 
 RUN echo '#!/bin/bash\n\
-echo "Waiting for database..."\n\
-sleep 10\n\
 echo "Running E2E Tests..."\n\
 dotnet test --filter "Category=EndToEnd" --logger "trx;LogFileName=e2e-tests.trx" --results-directory /test-results\n\
-exit $?' > /run-e2e-tests.sh && chmod +x /run-e2e-tests.sh 
+exit $?' > /run-e2e-tests.sh && chmod +x /run-e2e-tests.sh
 
 RUN mkdir -p /test-results
