@@ -1,4 +1,6 @@
-﻿services:
+﻿version: '3.8'
+
+services:
   db:
     image: postgres:15
     environment:
@@ -7,8 +9,6 @@
       POSTGRES_DB: artlink_test
     ports:
       - "5433:5432"
-    volumes:
-      - pgdata:/var/lib/postgresql/data
     networks:
       - test-network
 
@@ -33,9 +33,6 @@
         pwd
         dotnet test ArtLink.Tests.csproj --logger trx -v n
 
-volumes:
-  pgdata:
-    
 networks:
   test-network:
     driver: bridge

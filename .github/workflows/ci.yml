@@ -3,13 +3,20 @@ name: Run Tests on Push
 on: [push]
 
 jobs:
+<<<<<<< HEAD
   run-tests:
     runs-on: ubuntu-latest
+=======
+  unit-tests:
+    runs-on: ubuntu-latest
+    name: Unit Tests
+>>>>>>> b7ab0bd (attempt to use one container)
     
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
 
+<<<<<<< HEAD
     - name: Run Docker tests
       run: |
         ls
@@ -19,6 +26,13 @@ jobs:
       run: |
         ls
         dotnet test --filter "Category=Unit" --logger "trx;LogFileName=unit-tests.trx" --verbosity normal
+=======
+    - name: Run Unit Tests in Container
+      run: |
+        cd ArtLink/ArtLink.Tests
+        docker compose build test-runner
+        docker compose run --rm test-runner /run-unit-tests.sh
+>>>>>>> b7ab0bd (attempt to use one container)
 
     - name: Upload Unit Test Results
       uses: actions/upload-artifact@v4
@@ -39,10 +53,18 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
+<<<<<<< HEAD
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: 8.0.x
+=======
+    - name: Start Database
+      run: |
+        cd ArtLink/ArtLink.Tests
+        docker compose up -d db
+        sleep 10
+>>>>>>> b7ab0bd (attempt to use one container)
 
     - name: Start PostgreSQL
       run: |
@@ -66,9 +88,11 @@ jobs:
         name: integration-test-results
         path: TestResults/integration-tests.trx
 
-    - name: Stop PostgreSQL
+    - name: Stop Database
       if: always()
-      run: docker stop db && docker rm db
+      run: |
+        cd ArtLink/ArtLink.Tests
+        docker compose down
 
   e2e-tests:
     runs-on: ubuntu-latest
@@ -82,10 +106,11 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: 8.0.x
+    - name: Start Database
+      run: |
+        cd ArtLink/ArtLink.Tests
+        docker compose up -d db
+        sleep 10
 
     - name: Start PostgreSQL
       run: |
@@ -111,4 +136,22 @@ jobs:
 
     - name: Stop PostgreSQL
       if: always()
-      run: docker stop db && docker rm db
+      run: |
+        cd ArtLink/ArtLink.Tests
+        docker compose down -v
+
+  test-report:
+    runs-on: ubuntu-latest
+    name: Test Report
+    needs: [unit-tests, integration-tests, e2e-tests]
+    if: always()
+    
+    steps:
+    - name: Generate Test Summary
+      run: |
+        echo "## Test Execution Summary" >> $GITHUB_STEP_SUMMARY
+        echo "| Test Type | Status |" >> $GITHUB_STEP_SUMMARY
+        echo "|-----------|--------|" >> $GITHUB_STEP_SUMMARY
+        echo "| Unit Tests | ${{ needs.unit-tests.result }} |" >> $GITHUB_STEP_SUMMARY
+        echo "| Integration Tests | ${{ needs.integration-tests.result }} |" >> $GITHUB_STEP_SUMMARY  
+        echo "| E2E Tests | ${{ needs.e2e-tests.result }} |" >> $GITHUB_STEP_SUMMARY
