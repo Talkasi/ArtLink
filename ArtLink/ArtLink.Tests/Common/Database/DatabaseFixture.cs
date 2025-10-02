@@ -1,13 +1,15 @@
 ﻿using Microsoft.Extensions.Configuration;
+using Npgsql;
 
 namespace ArtLink.Tests.Common.Database;
 
 public class DatabaseFixture : IAsyncLifetime
 {
-    private readonly string _connectionString;
+    private readonly string _baseConnectionString;
+    private readonly string _databaseName;
     private readonly string _scriptsPath;
 
-    public string ConnectionString => _connectionString;
+    public string ConnectionString { get; private set; }
 
     public DatabaseFixture()
     {
@@ -21,25 +23,67 @@ public class DatabaseFixture : IAsyncLifetime
                 .AddEnvironmentVariables()
                 .Build();
 
-            _connectionString = config.GetConnectionString("TestDatabase")
-                                ?? throw new InvalidOperationException("Connection string 'TestDatabase' not found in appsettings.Test.json");
+            _baseConnectionString = config.GetConnectionString("TestDatabase")
+                                    ?? throw new InvalidOperationException("Connection string 'TestDatabase' not found in appsettings.Test.json");
         }
         else
         {
-            _connectionString = tmpConnectionString;
+            _baseConnectionString = tmpConnectionString;
         }
+        
+        _databaseName = $"test_db_{Guid.NewGuid():N}";
+        ConnectionString = $"{_baseConnectionString};Database={_databaseName}";
         
         _scriptsPath = Path.Combine(Directory.GetCurrentDirectory(), "Common", "Database", "schemas");
     }
 
     public async Task InitializeAsync()
     {
+        await CreateDatabaseAsync();
         await ResetDatabaseAsync();
     }
 
     public async Task DisposeAsync()
     {
-        await ResetDatabaseAsync();
+        await DropDatabaseAsync();
+    }
+
+    private async Task CreateDatabaseAsync()
+    {
+        var masterConnString = new NpgsqlConnectionStringBuilder(_baseConnectionString)
+        {
+            Database = "postgres"
+        }.ToString();
+
+        await using var conn = new NpgsqlConnection(masterConnString);
+        await conn.OpenAsync();
+        
+        var createDbSql = $"CREATE DATABASE {_databaseName}";
+        await using var cmd = new NpgsqlCommand(createDbSql, conn);
+        await cmd.ExecuteNonQueryAsync();
+    }
+
+    private async Task DropDatabaseAsync()
+    {
+        var masterConnString = new NpgsqlConnectionStringBuilder(_baseConnectionString)
+        {
+            Database = "postgres"
+        }.ToString();
+
+        await using var conn = new NpgsqlConnection(masterConnString);
+        await conn.OpenAsync();
+        
+        var terminateSql = $@"
+            SELECT pg_terminate_backend(pid) 
+            FROM pg_stat_activity 
+            WHERE datname = '{_databaseName}' AND pid <> pg_backend_pid()";
+        
+        await using var terminateCmd = new NpgsqlCommand(terminateSql, conn);
+        await terminateCmd.ExecuteNonQueryAsync();
+        
+        var dropDbSql = $"DROP DATABASE IF EXISTS {_databaseName}";
+        await using var dropCmd = new NpgsqlCommand(dropDbSql, conn);
+        await dropCmd.ExecuteNonQueryAsync();
     }
 
     private async Task ApplyScriptAsync(string scriptFile)
@@ -50,9 +94,9 @@ public class DatabaseFixture : IAsyncLifetime
 
         var sql = await File.ReadAllTextAsync(fullPath);
 
-        await using var conn = new Npgsql.NpgsqlConnection(_connectionString);
+        await using var conn = new NpgsqlConnection(ConnectionString);
         await conn.OpenAsync();
-        await using var cmd = new Npgsql.NpgsqlCommand(sql, conn);
+        await using var cmd = new NpgsqlCommand(sql, conn);
         await cmd.ExecuteNonQueryAsync();
     }
 
