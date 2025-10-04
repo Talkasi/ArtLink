@@ -3,7 +3,7 @@ echo Starting test execution...
 echo.
 
 echo Cleaning previous results...
-if exist "TestResults" rmdir /s /q "TestResults"
+if exist "Common/TestResults" rmdir /s /q "Common/TestResults"
 
 echo Restoring packages...
 dotnet restore
@@ -12,7 +12,8 @@ echo Building project...
 dotnet build --no-restore
 
 echo Running tests...
-dotnet test --no-build --verbosity normal --logger trx --settings:.runsettings --results-directory TestResults
+set ALLURE_RESULTS_DIRECTORY=Common\TestResults\allure-results
+dotnet test --no-build --verbosity n --settings:.runsettings --results-directory Common/TestResults
 
 if %ERRORLEVEL% NEQ 0 (
     echo Some tests failed!
@@ -20,4 +21,4 @@ if %ERRORLEVEL% NEQ 0 (
     echo All tests passed!
 )
 
-allure serve TestResults
+allure serve Common/TestResults

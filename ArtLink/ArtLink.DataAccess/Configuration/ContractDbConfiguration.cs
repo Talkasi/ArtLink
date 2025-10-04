@@ -33,14 +33,16 @@ public class ContractDbConfiguration : IEntityTypeConfiguration<ContractDb>
             .HasMaxLength(50);
 
         builder.HasOne(c => c.Artist)
-            .WithMany()
+            .WithMany(a => a.Contracts)
             .HasForeignKey(c => c.ArtistId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.Cascade)
+            .IsRequired();
 
         builder.HasOne(c => c.Employer)
             .WithMany()
             .HasForeignKey(c => c.EmployerId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.Cascade)
+            .IsRequired();
     }
 }
 
